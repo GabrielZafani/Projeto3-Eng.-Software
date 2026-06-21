@@ -1,0 +1,192 @@
+:root {
+  --flour: #FAF3E6;
+  --dough: #F0E4CB;
+  --crust: #6B4226;
+  --crust-dark: #2B1B12;
+  --honey: #C97C1E;
+  --honey-light: #E8B96B;
+  --text-main: #3D2817;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--flour);
+  color: var(--text-main);
+  font-family: 'Work Sans', sans-serif;
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  color: var(--crust-dark);
+}
+
+.brand-accent { color: var(--honey); }
+
+/* Navbar */
+.navbar-pdm {
+  background: var(--flour);
+  border-bottom: 1px solid var(--dough);
+  padding: 1rem 0;
+}
+.navbar-brand {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 1.4rem;
+  color: var(--crust-dark) !important;
+}
+.navbar-nav .nav-link {
+  color: var(--text-main) !important;
+  font-weight: 500;
+  margin-left: 1.2rem;
+}
+.navbar-nav .nav-link.active { color: var(--honey) !important; }
+
+/* Hero */
+.hero { padding: 4.5rem 0 2rem; }
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--honey);
+  margin-bottom: 0.6rem;
+}
+.hero-title {
+  font-size: clamp(2.1rem, 4.5vw, 3.4rem);
+  line-height: 1.15;
+  margin-bottom: 1.1rem;
+}
+.hero-text { font-size: 1.1rem; max-width: 38rem; margin-bottom: 1.8rem; }
+
+.btn-honey {
+  background: var(--honey);
+  border: none;
+  color: var(--flour);
+  font-weight: 600;
+  padding: 0.65rem 1.6rem;
+  border-radius: 6px;
+}
+.btn-honey:hover { background: var(--crust); color: #fff; }
+
+.btn-outline-honey {
+  border: 1.5px solid var(--honey);
+  color: var(--honey);
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 6px;
+}
+.btn-outline-honey:hover { background: var(--honey); color: #fff; }
+
+/* Divisor "fio de mel" — elemento de assinatura visual */
+.honey-divider { width: 100%; height: 36px; display: block; margin-top: 1rem; }
+.honey-divider path { fill: none; stroke: var(--honey); stroke-width: 3.5; stroke-linecap: round; }
+.honey-divider circle { fill: var(--honey); }
+
+/* Seções */
+.destaques, .receitas-grid, .receita-detalhe, .contato-grid { padding: 3rem 0; }
+.section-title { font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 1.8rem; }
+.section-title-sm { font-size: 1.3rem; margin-bottom: 1.2rem; }
+
+/* Cards de receita */
+.card-receita {
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--dough);
+  height: 100%;
+  transition: transform 0.18s ease;
+}
+.card-link { text-decoration: none; display: block; }
+.card-link:hover .card-receita { transform: translateY(-4px); }
+
+.card-thumb { height: 160px; }
+.thumb-1 { background: linear-gradient(135deg, #C99355, #8B5A2B); }
+.thumb-2 { background: linear-gradient(135deg, #E8B96B, #C97C1E); }
+.thumb-3 { background: linear-gradient(135deg, #D9C18A, #B5854A); }
+
+.card-body { padding: 1.2rem; }
+.badge-categoria {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--flour);
+  border: 1px solid var(--honey);
+  color: var(--honey);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  margin-bottom: 0.6rem;
+}
+.card-title { font-size: 1.15rem; margin-bottom: 0.4rem; color: var(--crust-dark); }
+.card-meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; color: var(--honey); margin: 0; }
+
+/* Filtro de categorias */
+.filtro-categorias { padding: 0 0 1rem; }
+.filtro-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.chip {
+  display: inline-block;
+  padding: 0.4rem 1rem;
+  border: 1.5px solid var(--honey);
+  border-radius: 999px;
+  color: var(--honey);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.chip:hover { background: var(--honey-light); color: var(--crust-dark); border-color: var(--honey-light); }
+.chip.active { background: var(--honey); color: var(--flour); }
+
+.sem-resultados {
+  font-family: 'Work Sans', sans-serif;
+  color: var(--crust);
+  padding: 1.5rem 0;
+}
+
+/* Páginas internas */
+.page-header { padding-top: 3rem; }
+.page-title { font-size: clamp(1.8rem, 4vw, 2.6rem); }
+.page-subtitle { color: var(--crust); max-width: 36rem; }
+
+/* Receita detalhe */
+.voltar-link { display: inline-block; margin-bottom: 1.2rem; color: var(--honey); font-weight: 600; text-decoration: none; }
+.receita-title { font-size: clamp(1.8rem, 4vw, 2.6rem); margin: 0.5rem 0; }
+.receita-meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: var(--crust); }
+.receita-thumb { height: 260px; border-radius: 10px; margin: 1.5rem 0 2.5rem; }
+.lista-ingredientes, .lista-passos { padding-left: 1.2rem; }
+.lista-ingredientes li, .lista-passos li { margin-bottom: 0.6rem; }
+
+/* Contato */
+.lista-contato { list-style: none; padding: 0; }
+.lista-contato li { margin-bottom: 0.8rem; }
+
+/* Footer */
+.footer-pdm { background: var(--crust-dark); color: var(--dough); margin-top: 3rem; }
+.footer-brand { color: var(--flour); font-size: 1.3rem; }
+.footer-text { color: #C9B89A; font-size: 0.92rem; }
+.footer-heading {
+  font-family: 'IBM Plex Mono', monospace;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--honey-light);
+  margin-bottom: 0.8rem;
+}
+.footer-links { list-style: none; padding: 0; }
+.footer-links a { color: #C9B89A; text-decoration: none; font-size: 0.92rem; display: block; margin-bottom: 0.4rem; }
+.footer-links a:hover { color: var(--honey-light); }
+.footer-rule { border-color: #4A3324; margin: 1.5rem 0 1rem; }
+.footer-copy { font-size: 0.8rem; color: #9C8568; margin: 0; }
+
+/* Responsivo (celular) */
+@media (max-width: 767px) {
+  .hero { padding: 2.6rem 0 1.5rem; }
+  .navbar-nav .nav-link { margin-left: 0; padding: 0.5rem 0; }
+  .receita-thumb { height: 180px; }
+}
