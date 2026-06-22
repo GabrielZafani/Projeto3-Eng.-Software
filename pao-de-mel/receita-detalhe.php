@@ -1,7 +1,12 @@
 <?php
-require 'includes/header.php';
+require 'includes/header.php'; // RUBRICA DESENVOLVIMENTO WEB MODERNA - UTILIZAÇÃO DE TEMPLATE COM PHP
 require 'includes/dados-receitas.php'; // RUBRICA TECH FORGE - ARMAZENAMENTO ESTRUTURADO COM ARRAYS
 require_once 'includes/funcoes.php'; // RUBRICA TECH FORGE - MODULARIZAÇÃO COM FUNÇÕES DE PROCESSAMENTO
+
+// RUBRICA TECH FORGE - VALIDAÇÃO DE REGRAS DE NEGÓCIO COM CONDICIONAIS
+// Uma receita com dado inconsistente (ex: tempo de preparo zerado) nunca
+// chega até a busca por id — para a página, ela simplesmente não existe.
+$receitas = filtrarReceitasValidas($receitas);
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
@@ -14,14 +19,20 @@ $receitaEncontrada = buscarReceitaPorId($receitas, $id);
 <section class="container receita-detalhe">
   <a href="receitas.php" class="voltar-link">← Voltar para receitas</a>
 
-  <?php if ($receitaEncontrada): ?>
+  <?php
+  // RUBRICA DESENVOLVIMENTO WEB MODERNA - CORRETA UTILIZAÇÃO DE COMANDOS NO PHP (IF, FOREACH)
+  if ($receitaEncontrada): ?>
     <div class="receita-header">
-      <span class="badge badge-categoria"><?php echo $receitaEncontrada['categoria']; ?></span>
+      <span class="badge badge-categoria"><?php echo $receitaEncontrada['categoria']; ?></span> <!-- Bootstrap: componente Badge -->
       <h1 class="receita-title"><?php echo $receitaEncontrada['nome']; ?></h1>
-      <p class="receita-meta">⏱ Preparo: <?php echo formatarTempoPreparo($receitaEncontrada['tempo_preparo']); ?> &nbsp;·&nbsp; Dificuldade: <?php echo $receitaEncontrada['dificuldade']; ?></p>
+      <p class="receita-meta">⏱ Preparo: <?php echo formatarTempoPreparo($receitaEncontrada['tempo_preparo']); ?></p>
     </div>
 
-    <div class="card-thumb <?php echo $receitaEncontrada['thumb']; ?> receita-thumb"></div>
+    <div class="card-thumb <?php echo $receitaEncontrada['thumb']; ?> receita-thumb">
+      <?php if ($receitaEncontrada['imagem'] !== ''): ?>
+        <img src="<?php echo $receitaEncontrada['imagem']; ?>" alt="<?php echo $receitaEncontrada['nome']; ?>">
+      <?php endif; ?>
+    </div>
 
     <div class="row g-5 receita-conteudo">
       <div class="col-lg-4">

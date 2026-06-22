@@ -1,7 +1,10 @@
 <?php
-require 'includes/header.php';
+require 'includes/header.php'; // RUBRICA DESENVOLVIMENTO WEB MODERNA - UTILIZAÇÃO DE TEMPLATE COM PHP
 require 'includes/dados-receitas.php'; // RUBRICA TECH FORGE - ARMAZENAMENTO ESTRUTURADO COM ARRAYS
 require_once 'includes/funcoes.php'; // RUBRICA TECH FORGE - MODULARIZAÇÃO COM FUNÇÕES DE PROCESSAMENTO
+
+// RUBRICA TECH FORGE - VALIDAÇÃO DE REGRAS DE NEGÓCIO COM CONDICIONAIS
+$receitas = filtrarReceitasValidas($receitas);
 
 // A página lê o $_GET aqui (uma vez só) e passa o valor como parâmetro
 // pra função — a função em si não toca em variável global.
@@ -28,18 +31,24 @@ $categorias = obterCategorias($receitas);
 
 <section class="container receitas-grid">
   <div class="row g-4">
-    <?php if (empty($receitasExibidas)): ?>
+    <?php
+    // RUBRICA DESENVOLVIMENTO WEB MODERNA - CORRETA UTILIZAÇÃO DE COMANDOS NO PHP (IF, FOREACH)
+    if (empty($receitasExibidas)): ?>
       <p class="sem-resultados">Nenhuma receita encontrada nessa categoria.</p>
     <?php else: ?>
       <?php foreach ($receitasExibidas as $receita): ?>
         <div class="col-md-4">
           <a href="receita-detalhe.php?id=<?php echo $receita['id']; ?>" class="card-link">
-            <div class="card card-receita">
-              <div class="card-thumb <?php echo $receita['thumb']; ?>"></div>
+            <div class="card card-receita"> <!-- Bootstrap: componente Card -->
+              <div class="card-thumb <?php echo $receita['thumb']; ?>">
+                <?php if ($receita['imagem'] !== ''): ?>
+                  <img src="<?php echo $receita['imagem']; ?>" alt="<?php echo $receita['nome']; ?>">
+                <?php endif; ?>
+              </div>
               <div class="card-body">
-                <span class="badge badge-categoria"><?php echo $receita['categoria']; ?></span>
+                <span class="badge badge-categoria"><?php echo $receita['categoria']; ?></span> <!-- Bootstrap: componente Badge -->
                 <h3 class="card-title"><?php echo $receita['nome']; ?></h3>
-                <p class="card-meta">⏱ <?php echo formatarTempoPreparo($receita['tempo_preparo']); ?> · <?php echo $receita['dificuldade']; ?></p>
+                <p class="card-meta">⏱ <?php echo formatarTempoPreparo($receita['tempo_preparo']); ?></p>
               </div>
             </div>
           </a>

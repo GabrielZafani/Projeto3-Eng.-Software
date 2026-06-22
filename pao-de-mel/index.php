@@ -1,7 +1,12 @@
 <?php
-require 'includes/header.php';
+require 'includes/header.php'; // RUBRICA DESENVOLVIMENTO WEB MODERNA - UTILIZAÇÃO DE TEMPLATE COM PHP
 require 'includes/dados-receitas.php'; // RUBRICA TECH FORGE - ARMAZENAMENTO ESTRUTURADO COM ARRAYS
 require_once 'includes/funcoes.php'; // RUBRICA TECH FORGE - MODULARIZAÇÃO COM FUNÇÕES DE PROCESSAMENTO
+
+// RUBRICA TECH FORGE - VALIDAÇÃO DE REGRAS DE NEGÓCIO COM CONDICIONAIS
+// A partir daqui $receitas só contém itens consistentes (tempo de preparo
+// válido, ingredientes e modo de preparo preenchidos).
+$receitas = filtrarReceitasValidas($receitas);
 ?>
 
 <section class="hero">
@@ -24,26 +29,36 @@ require_once 'includes/funcoes.php'; // RUBRICA TECH FORGE - MODULARIZAÇÃO COM
 <section class="container destaques">
   <h2 class="section-title">Receitas em destaque</h2>
 
-  <div class="row g-4">
-    <?php
-    // RUBRICA DESENVOLVIMENTO WEB MODERNA - CORRETA UTILIZAÇÃO DE COMANDOS NO PHP (FOREACH)
-    $destaques = obterDestaques($receitas, 3);
-    foreach ($destaques as $receita):
-    ?>
-      <div class="col-md-4">
-        <a href="receita-detalhe.php?id=<?php echo $receita['id']; ?>" class="card-link">
-          <div class="card card-receita">
-            <div class="card-thumb <?php echo $receita['thumb']; ?>"></div>
-            <div class="card-body">
-              <span class="badge badge-categoria"><?php echo $receita['categoria']; ?></span>
-              <h3 class="card-title"><?php echo $receita['nome']; ?></h3>
-              <p class="card-meta">⏱ <?php echo formatarTempoPreparo($receita['tempo_preparo']); ?> · <?php echo $receita['dificuldade']; ?></p>
+  <?php
+  // RUBRICA DESENVOLVIMENTO WEB MODERNA - CORRETA UTILIZAÇÃO DE COMANDOS NO PHP (IF)
+  if (empty($receitas)): ?>
+    <p class="sem-resultados">Nenhuma receita disponível no momento.</p>
+  <?php else: ?>
+    <div class="row g-4">
+      <?php
+      // RUBRICA DESENVOLVIMENTO WEB MODERNA - CORRETA UTILIZAÇÃO DE COMANDOS NO PHP (FOREACH)
+      $destaques = obterDestaques($receitas, 3);
+      foreach ($destaques as $receita):
+      ?>
+        <div class="col-md-4">
+          <a href="receita-detalhe.php?id=<?php echo $receita['id']; ?>" class="card-link">
+            <div class="card card-receita"> <!-- Bootstrap: componente Card -->
+              <div class="card-thumb <?php echo $receita['thumb']; ?>">
+                <?php if ($receita['imagem'] !== ''): ?>
+                  <img src="<?php echo $receita['imagem']; ?>" alt="<?php echo $receita['nome']; ?>">
+                <?php endif; ?>
+              </div>
+              <div class="card-body">
+                <span class="badge badge-categoria"><?php echo $receita['categoria']; ?></span> <!-- Bootstrap: componente Badge -->
+                <h3 class="card-title"><?php echo $receita['nome']; ?></h3>
+                <p class="card-meta">⏱ <?php echo formatarTempoPreparo($receita['tempo_preparo']); ?></p>
+              </div>
             </div>
-          </div>
-        </a>
-      </div>
-    <?php endforeach; ?>
-  </div>
+          </a>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
 
   <div class="text-center mt-5">
     <a href="receitas.php" class="btn btn-outline-honey">Ver todas as receitas</a>

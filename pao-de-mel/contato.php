@@ -1,4 +1,4 @@
-<?php require 'includes/header.php'; ?>
+<?php require 'includes/header.php'; ?> <!-- RUBRICA DESENVOLVIMENTO WEB MODERNA - UTILIZAÇÃO DE TEMPLATE COM PHP -->
 
 <section class="container page-header">
   <h1 class="page-title">Fale com a Pão de Mel</h1>
@@ -17,7 +17,7 @@
     </div>
     <div class="col-lg-6">
       <h2 class="section-title-sm">Mande uma mensagem</h2>
-      <form>
+      <form> <!-- Bootstrap: componente Form -->
         <div class="mb-3">
           <label class="form-label" for="nome">Nome</label>
           <input type="text" class="form-control" id="nome" name="nome">

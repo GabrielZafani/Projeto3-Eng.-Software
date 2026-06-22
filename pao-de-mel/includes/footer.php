@@ -21,7 +21,7 @@
       </div>
     </div>
     <hr class="footer-rule">
-    <p class="footer-copy">© <?php echo date('Y'); ?> Padaria Pão de Mel</p>
+    <p class="footer-copy">© <?php echo date('Y'); ?> Padaria Pão de Mel</p> <!-- RUBRICA DESENVOLVIMENTO WEB MODERNA - CRIAR UM LAYOUT MINIMAMENTE AGRADÁVEL E DINÂMICO COM PHP: ano calculado automaticamente -->
   </div>
 </footer>
 
