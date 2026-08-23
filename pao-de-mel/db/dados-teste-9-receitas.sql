@@ -40,7 +40,7 @@ INSERT INTO ingredientes (nome, unidade_medida) VALUES
 
 -- ===== RECEITAS (id na ordem de inserção, 1 a 9) =====
 
--- 1. Pão de Fermentação Natural — Pão — 240 min
+-- 1. Pão de Fermentação Natural - Pão - 240 min
 INSERT INTO receitas (nome, modo_preparo, tempo_preparo, id_categoria) VALUES
 ('Pão de Fermentação Natural', 'Misture a farinha com a água e deixe descansar por 30 minutos.
 Adicione o fermento e o sal, misturando bem.
@@ -48,7 +48,7 @@ Deixe a massa fermentar por 3 horas, dobrando a cada 30 minutos.
 Modele o pão e deixe descansar por mais 1 hora.
 Asse em forno bem quente (230°C) por 35 minutos.', 240, 1);
 
--- 2. Brioche Caseiro — Pão — 180 min
+-- 2. Brioche Caseiro - Pão - 180 min
 INSERT INTO receitas (nome, modo_preparo, tempo_preparo, id_categoria) VALUES
 ('Brioche Caseiro', 'Misture a farinha, o açúcar, o sal e o fermento.
 Adicione os ovos e amasse até formar uma massa lisa.
@@ -56,7 +56,7 @@ Incorpore a manteiga em temperatura ambiente, pouco a pouco.
 Deixe descansar por 2 horas, até dobrar de tamanho.
 Modele, deixe crescer mais 30 minutos e asse a 180°C por 25 minutos.', 180, 1);
 
--- 3. Pão Integral com Sementes — Pão — 150 min
+-- 3. Pão Integral com Sementes - Pão - 150 min
 INSERT INTO receitas (nome, modo_preparo, tempo_preparo, id_categoria) VALUES
 ('Pão Integral com Sementes', 'Misture as farinhas, o sal e o fermento.
 Adicione a água e amasse até formar uma massa homogênea.
@@ -64,7 +64,7 @@ Incorpore as sementes durante o amassamento.
 Deixe descansar por 2 horas, até dobrar de tamanho.
 Modele, deixe crescer mais 30 minutos e asse a 200°C por 35 minutos.', 150, 1);
 
--- 4. Pão de Mel Tradicional — Doce — 90 min
+-- 4. Pão de Mel Tradicional - Doce - 90 min
 INSERT INTO receitas (nome, modo_preparo, tempo_preparo, id_categoria) VALUES
 ('Pão de Mel Tradicional', 'Misture os ingredientes secos em uma tigela grande.
 Em outra tigela, bata os ovos com o mel e o leite.
@@ -72,7 +72,7 @@ Combine as duas misturas até obter uma massa homogênea.
 Despeje em uma forma untada e leve ao forno preaquecido a 180°C por 35 minutos.
 Deixe esfriar antes de desenformar e servir.', 90, 2);
 
--- 5. Bolo de Fubá Caseiro — Bolo — 60 min
+-- 5. Bolo de Fubá Caseiro - Bolo - 60 min
 INSERT INTO receitas (nome, modo_preparo, tempo_preparo, id_categoria) VALUES
 ('Bolo de Fubá Caseiro', 'Bata os ovos com o açúcar até clarear.
 Adicione o leite e misture bem.
@@ -80,7 +80,7 @@ Incorpore o fubá e a farinha peneirados.
 Por último, adicione o fermento e misture delicadamente.
 Asse em forma untada a 180°C por 40 minutos.', 60, 4);
 
--- 6. Bolo de Cenoura com Cobertura de Chocolate — Bolo — 70 min
+-- 6. Bolo de Cenoura com Cobertura de Chocolate - Bolo - 70 min
 INSERT INTO receitas (nome, modo_preparo, tempo_preparo, id_categoria) VALUES
 ('Bolo de Cenoura com Cobertura de Chocolate', 'Bata no liquidificador a cenoura, o óleo e os ovos até ficar homogêneo.
 Em uma tigela, misture o açúcar e a farinha, e adicione a mistura batida.
@@ -88,7 +88,7 @@ Acrescente o fermento por último, misturando delicadamente.
 Despeje em forma untada e asse a 180°C por 35 minutos.
 Derreta o chocolate em pó com um pouco de manteiga e cubra o bolo já frio.', 70, 4);
 
--- 7. Focaccia de Alecrim — Salgado — 120 min
+-- 7. Focaccia de Alecrim - Salgado - 120 min
 INSERT INTO receitas (nome, modo_preparo, tempo_preparo, id_categoria) VALUES
 ('Focaccia de Alecrim', 'Dissolva o fermento na água morna e deixe descansar 10 minutos.
 Misture a farinha, o sal e a água com fermento até formar uma massa.
@@ -96,7 +96,7 @@ Deixe descansar por 1 hora, até dobrar de tamanho.
 Espalhe a massa numa assadeira untada, faça furos com os dedos e regue com azeite.
 Distribua o alecrim por cima e asse a 220°C por 25 minutos.', 120, 3);
 
--- 8. Coxinha de Frango — Salgado — 90 min
+-- 8. Coxinha de Frango - Salgado - 90 min
 INSERT INTO receitas (nome, modo_preparo, tempo_preparo, id_categoria) VALUES
 ('Coxinha de Frango', 'Cozinhe o frango no caldo de galinha até desfiar facilmente.
 Em uma panela, doure a farinha na manteiga, adicionando o caldo aos poucos até formar uma massa lisa.
@@ -104,7 +104,7 @@ Deixe esfriar e modele as coxinhas recheadas com o frango desfiado.
 Passe na farinha de rosca e frite em óleo quente até dourar.
 Sirva ainda quente.', 90, 3);
 
--- 9. Empada de Palmito — Salgado — 80 min
+-- 9. Empada de Palmito - Salgado - 80 min
 INSERT INTO receitas (nome, modo_preparo, tempo_preparo, id_categoria) VALUES
 ('Empada de Palmito', 'Misture a farinha com a manteiga até formar uma farofa.
 Adicione o ovo e amasse até formar uma massa lisa, sem grudar nas mãos.

@@ -1,9 +1,9 @@
 <?php
-// header.php — parte de cima do template, incluída em toda página com require/require_once
+// header.php - parte de cima do template, incluída em toda página com require/require_once
 //
 // RUBRICA DESENVOLVIMENTO WEB MODERNA - UTILIZAÇÃO DE TEMPLATE COM PHP
 // header.php e footer.php são incluídos em toda página (index.php, receitas.php,
-// receita-detalhe.php, contato.php) via require/require_once — o HTML repetido
+// receita-detalhe.php, contato.php) via require/require_once - o HTML repetido
 
 
 require_once __DIR__ . '/funcoes.php'; // RUBRICA TECH FORGE - MODULARIZAÇÃO COM FUNÇÕES DE PROCESSAMENTO

@@ -5,7 +5,7 @@ require_once 'includes/funcoes.php'; // RUBRICA TECH FORGE - MODULARIZAÇÃO COM
 
 // RUBRICA TECH FORGE - VALIDAÇÃO DE REGRAS DE NEGÓCIO COM CONDICIONAIS
 // Uma receita com dado inconsistente (ex: tempo de preparo zerado) nunca
-// chega até a busca por id — para a página, ela simplesmente não existe.
+// chega até a busca por id - para a página, ela simplesmente não existe.
 $receitas = filtrarReceitasValidas($receitas);
 
 $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;

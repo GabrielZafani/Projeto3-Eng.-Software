@@ -12,7 +12,7 @@
 // Atenção: quantidade e valor_unitario chegam do MySQL como string
 // (colunas INT/DECIMAL viram texto no JSON do PDO). Por isso o tipo
 // aceita os dois formatos e o código sempre converte com Number()
-// antes de calcular — é isso que evita NaN na tela.
+// antes de calcular - é isso que evita NaN na tela.
 type Venda = {
     venda_id: number;
     produto: string;

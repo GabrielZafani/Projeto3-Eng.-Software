@@ -1,5 +1,5 @@
 -- ============================================================
--- MÓDULO DASHBOARD — Vendas da Padaria Pão de Mel
+-- MÓDULO DASHBOARD - Vendas da Padaria Pão de Mel
 -- ============================================================
 -- Este script complementa padaria.sql. Ele acrescenta a parte
 -- financeira do sistema (produtos vendidos e vendas realizadas),
@@ -47,7 +47,7 @@ CREATE TABLE vendas (
 
 
 -- ============================================================
--- 2. TRIGGERS — PADRONIZAÇÃO DE VALORES POSITIVOS
+-- 2. TRIGGERS - PADRONIZAÇÃO DE VALORES POSITIVOS
 -- ============================================================
 -- RUBRICA: Triggers (BEFORE UPDATE) para padronizar a inserção
 -- de valores positivos.
@@ -127,7 +127,7 @@ INSERT INTO vendas (id_produto, quantidade, data_venda) VALUES
 -- deixando a consulta legível em vez de virar um JOIN gigante.
 
 -- ------------------------------------------------------------
--- VIEW 1 — vw_vendas_detalhadas
+-- VIEW 1 - vw_vendas_detalhadas
 -- É a view que a API PHP consome. Entrega cada venda já ligada
 -- ao seu produto, receita e categoria.
 --
@@ -164,7 +164,7 @@ INNER JOIN categorias      c ON r.id_categoria = c.id;
 
 
 -- ------------------------------------------------------------
--- VIEW 2 — vw_faturamento_categoria
+-- VIEW 2 - vw_faturamento_categoria
 -- Consolida o faturamento agrupado por categoria e já calcula a
 -- participação percentual de cada uma no total.
 -- ------------------------------------------------------------
@@ -191,7 +191,7 @@ ORDER BY pc.faturamento DESC;
 
 
 -- ------------------------------------------------------------
--- VIEW 3 — vw_ranking_produtos
+-- VIEW 3 - vw_ranking_produtos
 -- Ranqueia os produtos por faturamento usando window function.
 -- ------------------------------------------------------------
 CREATE VIEW vw_ranking_produtos AS

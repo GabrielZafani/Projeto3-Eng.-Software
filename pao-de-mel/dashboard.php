@@ -17,7 +17,7 @@ require 'includes/header.php'; // RUBRICA DESENVOLVIMENTO WEB MODERNA - UTILIZA�
   (classe d-none do Bootstrap) e o TypeScript mostra o que for o caso.
 -->
 
-<!-- ESTADO: carregando — Bootstrap: componente Spinner -->
+<!-- ESTADO: carregando - Bootstrap: componente Spinner -->
 <section class="container">
   <div id="estado-carregando" class="text-center py-5 d-none">
     <div class="spinner-border text-warning" role="status">
@@ -26,7 +26,7 @@ require 'includes/header.php'; // RUBRICA DESENVOLVIMENTO WEB MODERNA - UTILIZA�
     <p class="text-muted mt-3 mb-0">Buscando as vendas na API...</p>
   </div>
 
-  <!-- ESTADO: erro de rede/banco — Bootstrap: componente Alert -->
+  <!-- ESTADO: erro de rede/banco - Bootstrap: componente Alert -->
   <div id="estado-erro" class="alert alert-danger d-none" role="alert">
     <strong>Não foi possível carregar os dados.</strong>
     <span id="estado-erro-msg"></span>
@@ -35,7 +35,7 @@ require 'includes/header.php'; // RUBRICA DESENVOLVIMENTO WEB MODERNA - UTILIZA�
     </div>
   </div>
 
-  <!-- ESTADO: banco vazio — Bootstrap: componente Alert -->
+  <!-- ESTADO: banco vazio - Bootstrap: componente Alert -->
   <div id="estado-vazio" class="alert alert-secondary d-none" role="alert">
     Nenhum dado registrado. Assim que houver vendas no banco, os números aparecem aqui.
   </div>

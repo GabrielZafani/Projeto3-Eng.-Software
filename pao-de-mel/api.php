@@ -7,7 +7,7 @@
 //
 // Importante: a consulta lê a VIEW vw_vendas_detalhadas, ou seja, os dados
 // já chegam limpos e consolidados pelas CTEs. Mas o endpoint entrega as
-// LINHAS BRUTAS (quantidade e valor_unitario separados) — quem calcula o
+// LINHAS BRUTAS (quantidade e valor_unitario separados) - quem calcula o
 // faturamento é o .reduce() no front, como pede a rubrica.
 
 header("Content-Type: application/json; charset=UTF-8");

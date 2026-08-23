@@ -1,15 +1,18 @@
-# PROJETO 3 — ENGENHARIA DE SOFTWARE
+# PROJETO 3 - ENGENHARIA DE SOFTWARE
 
 Dashboard de vendas: banco analítico, API PHP e TypeScript compilado.
 
 | Disciplina | Rubricas |
 |---|---|
-| **Banco de Dados Avançado** | CTEs e Views analíticas · Triggers (BEFORE UPDATE) |
-| **Desenvolvimento Web Avançada** | Aparência do sistema · Bootstrap (3+ componentes) |
-| **Lógica Avançada** | Agregações com Reduce · Cenários de exceção |
-| **Tech Forge** | Consumo de API e fluxo assíncrono · Integração de ambientes |
+| **Banco de Dados Avançado** | CTEs e Views analíticas, Triggers (BEFORE UPDATE) |
+| **Desenvolvimento Web Avançada** | Aparência do sistema, Bootstrap (3+ componentes) |
+| **Lógica Avançada** | Agregações com Reduce, Cenários de exceção |
+| **Tech Forge** | Consumo de API e fluxo assíncrono, Integração de ambientes |
 
----
+Os links abaixo abrem o arquivo direto na linha certa. No VS Code, clique com
+`Ctrl` pressionado, ou abra o preview do markdown com `Ctrl+Shift+V` e clique
+normalmente.
+
 ---
 
 ## BANCO DE DADOS AVANÇADO
@@ -19,16 +22,16 @@ Dashboard de vendas: banco analítico, API PHP e TypeScript compilado.
 RUBRICA BANCO DE DADOS AVANÇADO - CRIAÇÃO DE CTEs E VIEWS ANALÍTICAS NO MARIADB QUE LIMPEM E
 CONSOLIDEM OS DADOS BRUTOS DO SISTEMA, ENTREGANDO-OS PERFEITAMENTE ESTRUTURADOS
 ```
-- [db/dashboard-vendas.sql:114](db/dashboard-vendas.sql#L114) — `vw_vendas_detalhadas`, a view que a API consome
-- [db/dashboard-vendas.sql:115](db/dashboard-vendas.sql#L115) — CTE `vendas_limpas` (descarta quantidade ≤ 0)
-- [db/dashboard-vendas.sql:120](db/dashboard-vendas.sql#L120) — CTE `produtos_ativos` (descarta produto inativo e preço ≤ 0)
-- [db/dashboard-vendas.sql:146](db/dashboard-vendas.sql#L146) — `vw_faturamento_categoria`, com CTEs `por_categoria` e `total_geral`
-- [db/dashboard-vendas.sql:172](db/dashboard-vendas.sql#L172) — `vw_ranking_produtos`, com CTE + `ROW_NUMBER()`
-- [api.php:29](api.php#L29) — a API lendo da view (já recebe tudo limpo)
+- [db/dashboard-vendas.sql:114](db/dashboard-vendas.sql#L114) - `vw_vendas_detalhadas`, a view que a API consome
+- [db/dashboard-vendas.sql:115](db/dashboard-vendas.sql#L115) - CTE `vendas_limpas`, descarta quantidade menor ou igual a zero
+- [db/dashboard-vendas.sql:120](db/dashboard-vendas.sql#L120) - CTE `produtos_ativos`, descarta produto inativo e preço zerado
+- [db/dashboard-vendas.sql:146](db/dashboard-vendas.sql#L146) - `vw_faturamento_categoria`, com as CTEs `por_categoria` e `total_geral`
+- [db/dashboard-vendas.sql:172](db/dashboard-vendas.sql#L172) - `vw_ranking_produtos`, com CTE e `ROW_NUMBER()`
+- [api.php:29](api.php#L29) - a API lendo da view, já recebe tudo limpo
 
 **Limpeza e consolidação:** a CTE (cláusula `WITH`) funciona como uma tabela
 temporária com nome. Aqui ela isola a etapa de limpar o lixo da etapa de juntar
-as tabelas — em vez de um `JOIN` gigante com dez condições no `WHERE`.
+as tabelas, em vez de um `JOIN` gigante com dez condições no `WHERE`.
 
 **Entregando estruturado:** a view consolida 4 tabelas (`vendas`, `produtos`,
 `receitas` e `categorias`) em uma linha por venda, já com o nome do produto e a
@@ -47,16 +50,16 @@ RUBRICA BANCO DE DADOS AVANÇADO - IMPLEMENTAÇÃO DE TRIGGERS (BEFORE UPDATE) P
 A INSERÇÃO DE VALORES POSITIVOS
 ```
 **Protegendo a edição (BEFORE UPDATE):**
-- [db/dashboard-vendas.sql:69](db/dashboard-vendas.sql#L69) — `trg_vendas_valor_positivo` (protege `vendas.quantidade`)
-- [db/dashboard-vendas.sql:74](db/dashboard-vendas.sql#L74) — `trg_produtos_valor_positivo` (protege `produtos.valor_unitario`)
+- [db/dashboard-vendas.sql:69](db/dashboard-vendas.sql#L69) - `trg_vendas_valor_positivo`, protege `vendas.quantidade`
+- [db/dashboard-vendas.sql:74](db/dashboard-vendas.sql#L74) - `trg_produtos_valor_positivo`, protege `produtos.valor_unitario`
 
 **Protegendo o cadastro (BEFORE INSERT):**
-- [db/dashboard-vendas.sql:82](db/dashboard-vendas.sql#L82) — `trg_vendas_valor_positivo_ins`
-- [db/dashboard-vendas.sql:87](db/dashboard-vendas.sql#L87) — `trg_produtos_valor_positivo_ins`
+- [db/dashboard-vendas.sql:82](db/dashboard-vendas.sql#L82) - `trg_vendas_valor_positivo_ins`
+- [db/dashboard-vendas.sql:87](db/dashboard-vendas.sql#L87) - `trg_produtos_valor_positivo_ins`
 
 **Como padroniza:** `GREATEST(ABS(x), 1)` faz duas coisas de uma vez. O `ABS`
-transforma qualquer negativo em positivo, e o `GREATEST` garante o mínimo — venda
-de zero unidade não existe. O preço usa `0.01` como piso.
+transforma qualquer negativo em positivo, e o `GREATEST` garante o mínimo, já que
+venda de zero unidade não existe. O preço usa `0.01` como piso.
 
 **Por que são 4 e não 2:** no MySQL/MariaDB cada trigger atende a um evento só.
 A dupla `BEFORE UPDATE` cobre quem edita uma linha existente; a dupla
@@ -68,7 +71,6 @@ para a edição (grava `-99`, o banco guarda `99`) e teste 5B para o cadastro
 (insere `-77`, o banco guarda `77`).
 
 ---
----
 
 ## DESENVOLVIMENTO WEB AVANÇADA
 
@@ -77,18 +79,18 @@ para a edição (grava `-99`, o banco guarda `99`) e teste 5B para o cadastro
 RUBRICA DESENVOLVIMENTO WEB AVANÇADA - O SISTEMA POSSUI INTERFACE AMIGÁVEL, POSSUINDO USABILIDADE
 PARA FACILITAR PARA QUE O USUÁRIO NÃO TENHA DE FICAR PROCURANDO AS TAREFAS
 ```
-- [includes/header.php:39](includes/header.php#L39) — menu fixo no topo, em todas as páginas
-- [includes/funcoes.php:38](includes/funcoes.php#L38) — o item do menu da página atual fica destacado
-- [receitas.php:24](receitas.php#L24) — filtro por categoria em chips, um clique
-- [dashboard.php:44](dashboard.php#L44) — os 4 números mais importantes no topo, antes da tabela
-- [assets/css/style.css](assets/css/style.css) — paleta da padaria (mel, massa, crosta)
+- [includes/header.php:39](includes/header.php#L39) - menu fixo no topo, em todas as páginas
+- [includes/funcoes.php:38](includes/funcoes.php#L38) - o item do menu da página atual fica destacado
+- [receitas.php:24](receitas.php#L24) - filtro por categoria em chips, um clique
+- [dashboard.php:44](dashboard.php#L44) - os 4 números mais importantes no topo, antes da tabela
+- [assets/css/style.css](assets/css/style.css) - paleta da padaria (mel, massa, crosta)
 
 **O usuário não precisa procurar:** toda tarefa do sistema está a **um clique**
 do menu, que é o mesmo em todas as páginas e acompanha a rolagem. Não existe
 função escondida em submenu ou alcançável só por URL digitada.
 
 **Outras decisões de usabilidade:** o menu mostra onde você está; o card inteiro
-da receita é clicável (não só o título); toda tela sem resultado explica o motivo
+da receita é clicável, não só o título; toda tela sem resultado explica o motivo
 em vez de ficar em branco; e a dashboard exibe o estado de carregamento em vez de
 parecer travada.
 
@@ -99,22 +101,21 @@ parecer travada.
 RUBRICA DESENVOLVIMENTO WEB AVANÇADA - USOU O FRAMEWORK BOOTSTRAP NO DESENVOLVIMENTO DO LAYOUT,
 PELO MENOS 3 COMPONENTES
 ```
-- [includes/header.php:20](includes/header.php#L20) — o CSS do Bootstrap 5.3 carregado via CDN
-- [includes/header.php:33](includes/header.php#L33) — **Navbar** (com **Collapse** no botão de menu do celular)
-- [index.php:46](index.php#L46) — **Card** e **Badge** nos destaques
-- [receitas.php:41](receitas.php#L41) — **Card** e **Badge** na listagem
-- [receita-detalhe.php:26](receita-detalhe.php#L26) — **Badge** da categoria
-- [contato.php:20](contato.php#L20) — **Form** (`form-control`, `form-label`) e **Button**
-- [dashboard.php:23](dashboard.php#L23) — **Spinner** (carregando)
-- [dashboard.php:30](dashboard.php#L30) — **Alert** (erro de conexão)
-- [dashboard.php:52](dashboard.php#L52) — **Card** das métricas
-- [dashboard.php:90](dashboard.php#L90) — **Table** responsiva das vendas
+- [includes/header.php:20](includes/header.php#L20) - o CSS do Bootstrap 5.3 carregado via CDN
+- [includes/header.php:33](includes/header.php#L33) - **Navbar**, com **Collapse** no botão de menu do celular
+- [index.php:46](index.php#L46) - **Card** e **Badge** nos destaques
+- [receitas.php:41](receitas.php#L41) - **Card** e **Badge** na listagem
+- [receita-detalhe.php:26](receita-detalhe.php#L26) - **Badge** da categoria
+- [contato.php:20](contato.php#L20) - **Form** (`form-control`, `form-label`) e **Button**
+- [dashboard.php:23](dashboard.php#L23) - **Spinner** do carregamento
+- [dashboard.php:30](dashboard.php#L30) - **Alert** do erro de conexão
+- [dashboard.php:52](dashboard.php#L52) - **Card** das métricas
+- [dashboard.php:90](dashboard.php#L90) - **Table** responsiva das vendas
 
 **Contagem:** são 8 componentes distintos (Navbar, Card, Badge, Form, Button,
 Spinner, Alert e Table), além do Grid usado em todas as páginas. A rubrica pede
 no mínimo 3. Só na dashboard são 4 deles: Spinner, Alert, Card e Table.
 
----
 ---
 
 ## LÓGICA AVANÇADA
@@ -123,11 +124,11 @@ no mínimo 3. Só na dashboard são 4 deles: Spinner, Alert, Card e Table.
 ```
 RUBRICA LÓGICA AVANÇADA - AGREGAÇÕES E CÁLCULOS FINANCEIROS (USO DE REDUCE)
 ```
-- [src/app.ts:96](src/app.ts#L96) — **faturamento total**: `reduce` acumulando `quantidade × valor_unitario`
-- [src/app.ts:103](src/app.ts#L103) — **unidades vendidas**: `reduce` somando as quantidades
-- [src/app.ts:116](src/app.ts#L116) — **por produto**: `reduce` que acumula um objeto
-- [src/app.ts:124](src/app.ts#L124) — **campeão de vendas**: `reduce` achando o maior
-- [api.php:23](api.php#L23) — o array bruto que o PHP envia (quantidade e valor separados)
+- [src/app.ts:96](src/app.ts#L96) - **faturamento total**, `reduce` acumulando `quantidade * valor_unitario`
+- [src/app.ts:103](src/app.ts#L103) - **unidades vendidas**, `reduce` somando as quantidades
+- [src/app.ts:116](src/app.ts#L116) - **por produto**, `reduce` que acumula um objeto
+- [src/app.ts:124](src/app.ts#L124) - **campeão de vendas**, `reduce` achando o maior
+- [api.php:23](api.php#L23) - o array bruto que o PHP envia, com quantidade e valor separados
 
 **O ponto da rubrica:** o PHP **não** manda o total pronto. Ele manda as linhas
 cruas, com `quantidade` e `valor_unitario` em colunas separadas, e é o `reduce`
@@ -144,15 +145,15 @@ unidades**.
 ```
 RUBRICA LÓGICA AVANÇADA - TRATAMENTO DE CENÁRIOS DE EXCEÇÃO (EDGE CASES)
 ```
-- [src/app.ts:16](src/app.ts#L16) — `numeroSeguro()`, a barreira contra `NaN`
-- [src/app.ts:55](src/app.ts#L55) — valida se a resposta é mesmo um array antes do `reduce`
-- [src/app.ts:65](src/app.ts#L65) — banco vazio: mostra aviso em vez de dividir por zero
-- [src/app.ts:141](src/app.ts#L141) — `zerarCards()` imprime `R$ 0,00`, nunca `R$ NaN`
-- [src/app.ts:159](src/app.ts#L159) — tabela vazia exibe **"Nenhum dado registrado"**
-- [dashboard.php:39](dashboard.php#L39) — o bloco de aviso de banco vazio
+- [src/app.ts:16](src/app.ts#L16) - `numeroSeguro()`, a barreira contra `NaN`
+- [src/app.ts:55](src/app.ts#L55) - valida se a resposta é mesmo um array antes do `reduce`
+- [src/app.ts:65](src/app.ts#L65) - banco vazio: mostra aviso em vez de dividir por zero
+- [src/app.ts:141](src/app.ts#L141) - `zerarCards()` imprime `R$ 0,00`, nunca `R$ NaN`
+- [src/app.ts:159](src/app.ts#L159) - tabela vazia exibe **"Nenhum dado registrado"**
+- [dashboard.php:39](dashboard.php#L39) - o bloco de aviso de banco vazio
 
 **Por que `numeroSeguro()` existe:** o MySQL manda `DECIMAL` como texto
-(`"8.00"`). Se vier `null` ou lixo, `Number()` devolve `NaN` — e basta um `NaN`
+(`"8.00"`). Se vier `null` ou lixo, `Number()` devolve `NaN`, e basta um `NaN`
 para toda a soma virar `NaN` e estampar "R$ NaN" na tela. A função converte e,
 se o resultado não for um número finito, devolve `0`.
 
@@ -160,7 +161,6 @@ se o resultado não for um número finito, devolve `0`.
 que esvazia a view, e recarregue a dashboard. Aparece "Nenhum dado registrado" e
 os cards ficam em R$ 0,00.
 
----
 ---
 
 ## TECH FORGE
@@ -170,25 +170,55 @@ os cards ficam em R$ 0,00.
 RUBRICA TECH FORGE - CONSUMO DE API E RESOLUÇÃO DE FLUXO ASSÍNCRONO
 ```
 **No servidor (PHP):**
-- [api.php:13](api.php#L13) — headers de JSON e CORS
-- [api.php:21](api.php#L21) — `try` com `prepare`/`execute` via PDO
-- [api.php:39](api.php#L39) — `catch (PDOException)` devolvendo erro em JSON
-- [includes/conexao.php:23](includes/conexao.php#L23) — `catch` da falha de conexão
-- [includes/conexao.php:30](includes/conexao.php#L30) — erro sai em JSON quando quem chama é a API
+- [api.php:13](api.php#L13) - headers de JSON e CORS
+- [api.php:21](api.php#L21) - `try` com `prepare`/`execute` via PDO
+- [api.php:39](api.php#L39) - `catch (PDOException)` devolvendo erro em JSON
+- [includes/conexao.php:23](includes/conexao.php#L23) - `catch` da falha de conexão
+- [includes/conexao.php:30](includes/conexao.php#L30) - erro sai em JSON quando quem chama é a API
 
 **No navegador (TypeScript):**
-- [src/app.ts:39](src/app.ts#L39) — `async function` com `await fetch` na api.php
-- [src/app.ts:47](src/app.ts#L47) — checa `resposta.ok`
-- [src/app.ts:76](src/app.ts#L76) — `catch` que trata erro de rede e de banco
+- [src/app.ts:39](src/app.ts#L39) - `async function` com `await fetch` na api.php
+- [src/app.ts:47](src/app.ts#L47) - checa `resposta.ok`
+- [src/app.ts:76](src/app.ts#L76) - `catch` que trata erro de rede e de banco
 
 **A sutileza do `resposta.ok`:** o `fetch` só rejeita a promise em falha de rede.
-Se o servidor responder 500, ele considera sucesso — a resposta chegou. Por isso
-o status é checado na mão e um `Error` é lançado de propósito, para cair no mesmo
-`catch`.
+Se o servidor responder 500, ele considera sucesso, porque a resposta chegou. Por
+isso o status é checado na mão e um `Error` é lançado de propósito, para cair no
+mesmo `catch`.
 
-**Os 3 cenários cobertos:** MySQL desligado (API responde 500), Apache fora
+**Os 3 cenários cobertos:** MySQL desligado (a API responde 500), Apache fora
 (erro de rede) e API devolvendo um objeto de erro em vez de lista. Nos três a
 tela mostra o alerta vermelho com o botão "Tentar de novo", em vez de travar.
 
 ---
 
+### Integração de Ambientes (XAMPP + Compilação)
+```
+RUBRICA TECH FORGE - INTEGRAÇÃO DE AMBIENTES (XAMPP + COMPILAÇÃO TYPESCRIPT)
+```
+- [tsconfig.json:8](tsconfig.json#L8) - `rootDir: ./src` e `outDir: ./dist`
+- [tsconfig.json:5](tsconfig.json#L5) - modo `strict` ligado
+- [package.json:7](package.json#L7) - `npm run build` compila e `npm run watch` recompila ao salvar
+- [src/app.ts](src/app.ts) - o código-fonte que você edita
+- [dist/app.js](dist/app.js) - o resultado da compilação, que o navegador carrega
+- [dashboard.php:113](dashboard.php#L113) - a página carregando o `.js` compilado
+
+**O fluxo completo:** `src/app.ts` passa pelo `npx tsc`, vira `dist/app.js`, é
+chamado pela tag `<script>` da página, o Apache serve e o navegador executa.
+
+**Backend no XAMPP:** Apache e MySQL ligados no XAMPP Control Panel, projeto em
+`http://localhost/pao-de-mel/dashboard.php`.
+
+**Como demonstrar ao vivo:** mude o texto "Nenhum dado registrado" em
+[src/app.ts:161](src/app.ts#L161), rode `npx tsc`, dê F5 e o texto novo aparece.
+Isso prova que a compilação é real, e não um `.js` escrito à mão.
+
+---
+
+## ARQUIVOS DE APOIO
+
+- [../README.md](../README.md) - passo a passo de instalação e execução do projeto
+- [db/padaria.sql](db/padaria.sql) - cria as 4 tabelas originais (receitas, categorias, ingredientes, N:N)
+- [db/dados-teste-9-receitas.sql](db/dados-teste-9-receitas.sql) - popula com as 9 receitas
+- [db/dashboard-vendas.sql](db/dashboard-vendas.sql) - tabelas de venda, triggers e views analíticas
+- [db/testes-demonstracao.sql](db/testes-demonstracao.sql) - roteiro de testes para a apresentação

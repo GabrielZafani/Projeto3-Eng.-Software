@@ -1,5 +1,5 @@
 // ====================================================================
-// DASHBOARD DE VENDAS — Padaria Pão de Mel
+// DASHBOARD DE VENDAS - Padaria Pão de Mel
 // ====================================================================
 // RUBRICA - CONSUMO DE API E RESOLUÇÃO DE FLUXO ASSÍNCRONO
 // RUBRICA - AGREGAÇÕES E CÁLCULOS FINANCEIROS (USO DE REDUCE)
@@ -11,7 +11,7 @@
 // ====================================================================
 // O JSON traz "8.00" (string) e, se o banco estiver sujo, pode trazer
 // null ou texto inválido. Number(null) vira 0, mas Number("abc") vira
-// NaN — e NaN contamina toda soma seguinte, estampando "R$ NaN" na tela.
+// NaN - e NaN contamina toda soma seguinte, estampando "R$ NaN" na tela.
 // Esta função barra o problema na entrada, antes de qualquer cálculo.
 function numeroSeguro(valor: unknown): number {
     const convertido = Number(valor);
@@ -86,7 +86,7 @@ async function carregarDashboard(): Promise<void> {
 
 
 // ====================================================================
-// PASSO 2: OS GRANDES NÚMEROS — TUDO COM .reduce()
+// PASSO 2: OS GRANDES NÚMEROS - TUDO COM .reduce()
 // ====================================================================
 // RUBRICA: extrair as métricas globais com reduce() diretamente do
 // array bruto enviado pelo PHP (quantidade × valor unitário).
@@ -137,7 +137,7 @@ function atualizarCards(vendas: Venda[]): void {
     escreverTexto('card-campeao', metricas.campeaoVendas);
 }
 
-// EDGE CASE: sem dados, os cards mostram zero de verdade — nunca "NaN".
+// EDGE CASE: sem dados, os cards mostram zero de verdade - nunca "NaN".
 function zerarCards(): void {
     escreverTexto('card-faturamento', formatarMoeda(0));
     escreverTexto('card-unidades', '0 un.');

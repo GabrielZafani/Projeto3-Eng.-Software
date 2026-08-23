@@ -77,7 +77,7 @@ function receitaValida(array $receita): bool
 /**
  * Percorre o array de receitas e devolve só as que passam na validação
  * de receitaValida(). Receitas com dado inconsistente (ex: tempo de
- * preparo zerado ou negativo) simplesmente não aparecem na tela —
+ * preparo zerado ou negativo) simplesmente não aparecem na tela -
  * sem gerar erro na página.
  */
 function filtrarReceitasValidas(array $receitas): array
@@ -194,7 +194,7 @@ function modoPreparoParaPassos(string $textoModoPreparo): array
 /**
  * Caminho da foto de uma receita, seguindo a convenção de nome de arquivo
  * "receita-{id}.jpg" dentro de assets/img. Se o arquivo não existir no
- * servidor, devolve string vazia — quem exibe decide usar o gradiente
+ * servidor, devolve string vazia - quem exibe decide usar o gradiente
  * de cor como alternativa, sem gerar erro de imagem quebrada.
  */
 function caminhoImagemReceita(int $id): string

@@ -7,7 +7,7 @@ require_once 'includes/funcoes.php'; // RUBRICA TECH FORGE - MODULARIZAÇÃO COM
 $receitas = filtrarReceitasValidas($receitas);
 
 // A página lê o $_GET aqui (uma vez só) e passa o valor como parâmetro
-// pra função — a função em si não toca em variável global.
+// pra função - a função em si não toca em variável global.
 $categoriaSelecionada = isset($_GET['categoria']) ? $_GET['categoria'] : 'todas';
 
 // RUBRICA TECH FORGE - LÓGICA DE PESQUISA OU FILTRO

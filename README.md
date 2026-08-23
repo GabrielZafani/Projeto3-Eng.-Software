@@ -1,4 +1,4 @@
-# Pão de Mel — Blog de Receitas + Dashboard de Vendas
+# Pão de Mel - Blog de Receitas + Dashboard de Vendas
 
 Projeto da disciplina de Engenharia de Software (3º Período).
 
@@ -12,7 +12,7 @@ Projeto da disciplina de Engenharia de Software (3º Período).
 | Ferramenta | Para quê | Obrigatório? |
 |---|---|---|
 | **XAMPP** (Apache + MySQL/MariaDB + PHP 8) | rodar o site e o banco | **Sim** |
-| Node.js 18+ | recompilar os arquivos `.ts` | Não — o JavaScript já vem compilado em `pao-de-mel/dist/` |
+| Node.js 18+ | recompilar os arquivos `.ts` | Não, o JavaScript já vem compilado em `pao-de-mel/dist/` |
 
 > Não é preciso rodar `npm install` para testar o projeto. A pasta `dist/`
 > (JavaScript já compilado) está versionada de propósito justamente para isso.
@@ -49,15 +49,15 @@ Os scripts SQL estão em [pao-de-mel/db/](pao-de-mel/db/) e devem ser executados
 | 2 | `dados-teste-9-receitas.sql` | popula com 9 receitas de exemplo |
 | 3 | `dashboard-vendas.sql` | cria as tabelas de produtos/vendas, as VIEWS com CTE e as TRIGGERS |
 
-### Opção A — phpMyAdmin (mais simples)
+### Opção A: phpMyAdmin (mais simples)
 
 1. Acesse http://localhost/phpmyadmin
-2. Aba **Importar** → **Escolher arquivo** → selecione `db/padaria.sql` → **Executar**
+2. Aba **Importar**, botão **Escolher arquivo**, selecione `db/padaria.sql` e clique em **Executar**
 3. Repita para `db/dados-teste-9-receitas.sql` e depois para `db/dashboard-vendas.sql`
 
 > A partir do arquivo 2, selecione o banco **`padaria`** na barra lateral antes de importar.
 
-### Opção B — linha de comando
+### Opção B: linha de comando
 
 ```bash
 cd C:\xampp\htdocs\pao-de-mel\db
@@ -66,7 +66,7 @@ C:\xampp\mysql\bin\mysql -u root padaria < dados-teste-9-receitas.sql
 C:\xampp\mysql\bin\mysql -u root padaria < dashboard-vendas.sql
 ```
 
-Os scripts 2 e 3 podem ser rodados quantas vezes quiser — eles limpam e recriam
+Os scripts 2 e 3 podem ser rodados quantas vezes quiser, pois eles limpam e recriam
 tudo antes de inserir.
 
 ---
@@ -93,9 +93,9 @@ Acesse no navegador:
 
 **http://localhost/pao-de-mel/index.php**
 
-> ⚠️ Use o endereço **com `/index.php` no final**. O arquivo `.htaccess` desativa
+> Use o endereço **com `/index.php` no final**. O arquivo `.htaccess` desativa
 > a listagem de diretórios por segurança, então `http://localhost/pao-de-mel/`
-> (sem o arquivo) retorna 403 — isso é esperado, não é erro de instalação.
+> (sem o arquivo) retorna 403. Isso é esperado, não é erro de instalação.
 
 ### Páginas do sistema
 
@@ -112,12 +112,12 @@ Acesse no navegador:
 
 ## 6. Verificar se está tudo certo
 
-1. **Banco conectado:** abra `receitas.php` — devem aparecer 9 receitas.
+1. **Banco conectado:** abra `receitas.php` e devem aparecer 9 receitas.
    Se aparecer "Connection failed", revise o passo 4.
-2. **API funcionando:** abra `api.php` direto no navegador — deve retornar um
+2. **API funcionando:** abra `api.php` direto no navegador. Ele deve retornar um
    JSON com 21 linhas de vendas (a 22ª é filtrada pela VIEW, de propósito:
    é um produto inativo).
-3. **Dashboard:** abra `dashboard.php` — os 4 cards devem sair de `—` para os
+3. **Dashboard:** abra `dashboard.php` e os 4 cards devem sair do traço para os
    valores calculados, e a tabela deve encher. Se ficar no spinner ou mostrar o
    alerta vermelho, o problema está na API (passo anterior).
 
@@ -126,7 +126,7 @@ Acesse no navegador:
 O arquivo [pao-de-mel/db/testes-demonstracao.sql](pao-de-mel/db/testes-demonstracao.sql)
 é um roteiro de testes das VIEWS e TRIGGERS, com o resultado esperado comentado
 em cada um. Abra no DBeaver/phpMyAdmin com o banco `padaria` selecionado e execute
-**um comando por vez** (`Ctrl+Enter` no DBeaver) — não rode o arquivo inteiro.
+**um comando por vez** (`Ctrl+Enter` no DBeaver). Não rode o arquivo inteiro.
 Todo teste que altera dados já traz a linha que desfaz a alteração logo em seguida.
 
 ---
@@ -177,5 +177,5 @@ pao-de-mel/
 ├── dist/                          # JavaScript compilado (versionado)
 ├── db/                            # scripts SQL
 ├── assets/css/style.css
-└── guia-rubricas.md               # mapa das rubricas → linha do código
+└── guia-rubricas.md               # mapa das rubricas para as linhas do código
 ```
