@@ -6,11 +6,13 @@
 // RUBRICA TECH FORGE - ARMAZENAMENTO ESTRUTURADO COM ARRAYS
 
 
-require_once __DIR__ . '/conexao.php';   // abre $conn (mysqli)
+require_once __DIR__ . '/conexao.php';   // abre $pdo (PDO)
 require_once __DIR__ . '/funcoes.php';
 
 // ===== RUBRICA TECH FORGE - ARMAZENAMENTO ESTRUTURADO COM ARRAYS =====
 // $receitas é o array central do sistema. Todas as páginas leem daqui.
-$receitas = buscarReceitasDoBanco($conn);
+$receitas = buscarReceitasDoBanco($pdo);
 
-$conn->close();
+// Em PDO não existe close(): a conexão é encerrada ao anular a variável
+// (e o PHP encerraria sozinho no fim do script, de qualquer forma).
+$pdo = null;

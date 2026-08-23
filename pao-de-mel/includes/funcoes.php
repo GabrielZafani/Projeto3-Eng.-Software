@@ -226,13 +226,13 @@ function thumbClassPorId(int $id): string
  * ===== RUBRICA DESENVOLVIMENTO WEB MODERNA - DADOS RECUPERADOS DO BANCO E DEMONSTRADOS NA TELA =====
  * ===== RUBRICA DESENVOLVIMENTO WEB MODERNA - CORRETA UTILIZAÇÃO DE COMANDOS NO PHP (WHILE) =====
  *
- * Busca todas as receitas no banco (mysqli) e monta o MESMO formato de
+ * Busca todas as receitas no banco (PDO) e monta o MESMO formato de
  * array que usávamos no mock de teste: um único array $receitas, cada
  * item com id, nome, categoria, tempo_preparo, ingredientes (array) e
  * modo_preparo (array de passos). É por isso que nenhuma outra função
  * (filtro, validação, busca por id) precisou mudar uma linha sequer.
  */
-function buscarReceitasDoBanco(mysqli $conn): array
+function buscarReceitasDoBanco(PDO $pdo): array
 {
     $receitas = [];
 
@@ -241,9 +241,9 @@ function buscarReceitasDoBanco(mysqli $conn): array
                     FROM receitas r
                     INNER JOIN categorias c ON r.id_categoria = c.id
                     ORDER BY r.id";
-    $resultadoReceitas = $conn->query($sqlReceitas);
+    $resultadoReceitas = $pdo->query($sqlReceitas);
 
-    while ($linha = $resultadoReceitas->fetch_assoc()) {
+    while ($linha = $resultadoReceitas->fetch()) {
         $id = (int) $linha['id'];
         $receitas[$id] = [
             'id' => $id,
@@ -263,9 +263,9 @@ function buscarReceitasDoBanco(mysqli $conn): array
                         FROM receita_ingrediente ri
                         INNER JOIN ingredientes i ON ri.id_ingrediente = i.id
                         ORDER BY ri.id_receita";
-    $resultadoIngredientes = $conn->query($sqlIngredientes);
+    $resultadoIngredientes = $pdo->query($sqlIngredientes);
 
-    while ($linha = $resultadoIngredientes->fetch_assoc()) {
+    while ($linha = $resultadoIngredientes->fetch()) {
         $idReceita = (int) $linha['id_receita'];
 
         if (isset($receitas[$idReceita])) {

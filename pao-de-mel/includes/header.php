@@ -45,6 +45,9 @@ $paginaAtual = basename($_SERVER['PHP_SELF']);
           <a class="nav-link<?php echo classeNavAtiva($paginaAtual, ['receitas.php', 'receita-detalhe.php']); ?>" href="receitas.php">Receitas</a>
         </li>
         <li class="nav-item">
+          <a class="nav-link<?php echo classeNavAtiva($paginaAtual, ['dashboard.php']); ?>" href="dashboard.php">Dashboard</a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link<?php echo classeNavAtiva($paginaAtual, ['contato.php']); ?>" href="contato.php">Contato</a>
         </li>
       </ul>

@@ -1,0 +1,6 @@
+# Dependências do TypeScript — o professor não precisa delas para rodar.
+# Quem for editar os .ts roda "npm install" e elas voltam.
+node_modules/
+
+# Observação: a pasta dist/ FICA no repositório de propósito.
+# É o JavaScript já compilado, o que permite abrir o site sem instalar nada.
