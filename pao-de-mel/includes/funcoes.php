@@ -6,6 +6,34 @@
 
 
 /**
+ * Prepara um texto do banco para ser impresso em HTML.
+ *
+ * Enquanto o site era só leitura, imprimir direto era inofensivo: os nomes
+ * vinham de um script SQL que só nós editávamos. Com as telas de cadastro,
+ * qualquer pessoa passa a escolher esses textos - e uma categoria chamada
+ * "<script>alert(1)</script>" executaria na página de receitas de quem
+ * abrisse o site. Esta função corta esse caminho na saída.
+ *
+ * ENT_QUOTES cobre aspas simples também, porque o valor às vezes cai dentro
+ * de um atributo (alt="...", value='...').
+ */
+function escapar(?string $texto): string
+{
+    return htmlspecialchars($texto ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+/**
+ * Formata um valor em reais para as mensagens das telas de cadastro.
+ *
+ * Não usa a extensão intl de propósito: ela não vem ligada no XAMPP padrão,
+ * e a tela quebraria na máquina da faculdade sem aviso nenhum.
+ */
+function formatarDinheiro(float $valor): string
+{
+    return 'R$ ' . number_format($valor, 2, ',', '.');
+}
+
+/**
  * ===== RUBRICA TECH FORGE - MODULARIZAÇÃO COM FUNÇÕES DE PROCESSAMENTO =====
  * ===== RUBRICA TECH FORGE - FLUXO DE DADOS (PARÂMETROS E RETORNO) =====
  * Converte minutos em um texto legível.
