@@ -144,21 +144,26 @@ function filtrarPorCategoria(array $receitas, string $categoria): array
 }
 
 /**
- * Extrai a lista de categorias únicas existentes no array de receitas,
- * pra montar os botões de filtro dinamicamente (sem precisar digitar
- * "Pão, Doce, Salgado..." fixo em algum lugar).
+ * ===== RUBRICA DESENVOLVIMENTO WEB MODERNA - DADOS DO BANCO NA TELA =====
+ * Lista TODAS as categorias cadastradas, para os botões de filtro.
+ *
+ * Antes os botões eram montados a partir das receitas já carregadas. O
+ * efeito era que uma categoria recém-cadastrada na administração não
+ * aparecia aqui enquanto não tivesse receita - e parecia que o cadastro
+ * não tinha funcionado. Agora a lista vem da tabela.
+ *
+ * Clicar numa categoria vazia cai no "Nenhuma receita encontrada nessa
+ * categoria", que já existia e explica o que houve.
  */
-function obterCategorias(array $receitas): array
+function buscarCategoriasDoBanco(PDO $pdo): array
 {
     $categorias = [];
 
-    foreach ($receitas as $receita) {
-        if (!in_array($receita['categoria'], $categorias, true)) {
-            $categorias[] = $receita['categoria'];
-        }
-    }
+    $resultado = $pdo->query("SELECT nome FROM categorias ORDER BY nome");
 
-    sort($categorias);
+    while ($linha = $resultado->fetch()) {
+        $categorias[] = $linha['nome'];
+    }
 
     return $categorias;
 }

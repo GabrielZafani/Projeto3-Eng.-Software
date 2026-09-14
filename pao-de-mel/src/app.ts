@@ -133,6 +133,7 @@ async function carregarDashboard(): Promise<void> {
         if (tudo.vendas.length === 0) {
             mostrarVazio(true, tudo.meta);
             zerarCards();
+            zerarDestaques();
             exibirTabela([]);
             desenharPaginacao(pagina.meta);
             escreverResumo(pagina.meta);
@@ -141,6 +142,7 @@ async function carregarDashboard(): Promise<void> {
 
         mostrarVazio(false, tudo.meta);
         atualizarCards(tudo.vendas);
+        atualizarDestaques(tudo.vendas);
         exibirTabela(pagina.vendas);
         desenharPaginacao(pagina.meta);
         escreverResumo(pagina.meta);
@@ -152,6 +154,7 @@ async function carregarDashboard(): Promise<void> {
         mostrarCarregando(false);
         mostrarErro(erro instanceof Error ? erro.message : 'Erro desconhecido');
         zerarCards();
+        zerarDestaques();
         exibirTabela([]);
         limparPaginacao();
 
@@ -270,13 +273,272 @@ function zerarCards(): void {
 
 
 // ====================================================================
+// PASSO 2B: RANKING DE DESTAQUES - objeto de contagem + .map()
+// ====================================================================
+// RUBRICA: descobrir o maior indicador de destaque de forma dinâmica,
+// com estrutura de chave-valor.
+//
+// O acumulador é um objeto de contagem: a chave é o nome do produto e o
+// valor guarda os totais dele. Percorrer o array UMA vez e consultar por
+// chave é o que evita o laço dentro de laço - com a lista de produtos
+// crescendo, comparar cada venda com cada produto ficaria lento à toa.
+//
+// Nada aqui tem nome de produto escrito no código: se amanhã a padaria
+// cadastrar um pão novo que lidere, ele aparece sozinho.
+
+const TOTAL_DESTAQUES = 3;
+
+function ranquearProdutos(vendas: Venda[], limite: number): ProdutoRanqueado[] {
+    const porProduto: Record<string, TotaisProduto> = vendas.reduce((acumulador, venda) => {
+        const nome = venda.produto;
+        const unidades = numeroSeguro(venda.quantidade);
+        const faturamento = unidades * numeroSeguro(venda.valor_unitario);
+
+        const atual = acumulador[nome] ?? { unidades: 0, faturamento: 0 };
+
+        acumulador[nome] = {
+            unidades: atual.unidades + unidades,
+            faturamento: atual.faturamento + faturamento,
+        };
+
+        return acumulador;
+    }, {} as Record<string, TotaisProduto>);
+
+    const faturamentoGeral: number = Object.values(porProduto)
+        .reduce((total, totais) => total + totais.faturamento, 0);
+
+    return Object.entries(porProduto)
+        // .map() nº 1: o par [chave, valor] do objeto vira o formato da tela.
+        .map(([produto, totais]): ProdutoRanqueado => ({
+            posicao: 0,
+            produto,
+            faturamento: totais.faturamento,
+            // EDGE CASE: faturamento geral zerado (banco só com preço 0)
+            // faria 0/0 = NaN e estamparia "NaN% do total" na tela.
+            participacao: faturamentoGeral > 0
+                ? (totais.faturamento / faturamentoGeral) * 100
+                : 0,
+        }))
+        .sort((a, b) => {
+            // Empate em dinheiro se desfaz por unidade vendida. Sem este
+            // critério, dois produtos com o mesmo faturamento trocavam de
+            // lugar a cada F5 - a ordem ficava por conta do navegador, e
+            // parecia que o ranking estava calculando errado.
+            if (b.faturamento !== a.faturamento) {
+                return b.faturamento - a.faturamento;
+            }
+            return (porProduto[b.produto]?.unidades ?? 0) - (porProduto[a.produto]?.unidades ?? 0);
+        })
+        .slice(0, limite)
+        // .map() nº 2: a posição só existe DEPOIS de ordenar e cortar.
+        .map((item, indice): ProdutoRanqueado => ({ ...item, posicao: indice + 1 }));
+}
+
+
+// ====================================================================
+// PASSO 2C: SEGMENTAÇÃO POR PERÍODO - .filter()
+// ====================================================================
+// RUBRICA: isolar subconjuntos de dados para criar inteligência de
+// negócio, segmentando indicadores por período.
+//
+// A janela é contada a partir da venda MAIS RECENTE do banco, e não da
+// data de hoje. Custou um painel em branco descobrir isto: os dados de
+// demonstração são de agosto, e contar "últimos 7 dias" a partir de hoje
+// devolvia zero venda - uma tela vazia que parecia defeito do código,
+// quando o banco estava certo. Ancorado no último movimento, o recorte
+// sempre mostra a semana que de fato aconteceu.
+
+const DIAS_DA_JANELA = 7;
+
+// O banco pode devolver data nula, vazia ou '0000-00-00'. Sem esta
+// barreira o new Date() produz Invalid Date, e a janela inteira vira NaN.
+function ehDataValida(texto: unknown): boolean {
+    if (typeof texto !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(texto)) {
+        return false;
+    }
+
+    return !Number.isNaN(new Date(texto + 'T00:00:00Z').getTime());
+}
+
+// UTC de ponta a ponta. Com horário local, quem abrisse a dashboard em
+// fuso negativo veria a data voltar um dia na conversão de ida e volta,
+// e a semana começaria no dia errado.
+function somarDias(dataIso: string, dias: number): string {
+    const data = new Date(dataIso + 'T00:00:00Z');
+    data.setUTCDate(data.getUTCDate() + dias);
+    return data.toISOString().slice(0, 10);
+}
+
+function somarFaturamento(vendas: Venda[]): number {
+    return vendas.reduce(
+        (total, venda) => total + numeroSeguro(venda.quantidade) * numeroSeguro(venda.valor_unitario),
+        0
+    );
+}
+
+function recortarUltimaSemana(vendas: Venda[]): RecortePeriodo | null {
+    // .filter() nº 1: fora as linhas sem data utilizável.
+    const comData: Venda[] = vendas.filter((venda) => ehDataValida(venda.data_venda));
+
+    if (comData.length === 0) {
+        return null;
+    }
+
+    // Datas em 'AAAA-MM-DD' comparam certo como texto: largura fixa e a
+    // parte mais significativa primeiro. Por isso não há Date() aqui.
+    const fim: string = comData.reduce(
+        (maior, venda) => (venda.data_venda > maior ? venda.data_venda : maior),
+        comData[0].data_venda
+    );
+    const inicio: string = somarDias(fim, -(DIAS_DA_JANELA - 1));
+
+    // .filter() nº 2: a janela em si.
+    const daJanela: Venda[] = comData.filter(
+        (venda) => venda.data_venda >= inicio && venda.data_venda <= fim
+    );
+
+    // .filter() nº 3: a semana imediatamente anterior, só para comparar.
+    const fimAnterior: string = somarDias(inicio, -1);
+    const inicioAnterior: string = somarDias(fimAnterior, -(DIAS_DA_JANELA - 1));
+    const daJanelaAnterior: Venda[] = comData.filter(
+        (venda) => venda.data_venda >= inicioAnterior && venda.data_venda <= fimAnterior
+    );
+
+    const faturamento: number = somarFaturamento(daJanela);
+    const faturamentoAnterior: number = somarFaturamento(daJanelaAnterior);
+
+    return {
+        inicio,
+        fim,
+        faturamento,
+        unidades: daJanela.reduce((total, venda) => total + numeroSeguro(venda.quantidade), 0),
+        quantidadeVendas: daJanela.length,
+        // Set sobre o map dos nomes: quantas categorias distintas
+        // movimentaram na semana, sem contar a mesma duas vezes.
+        categorias: new Set(daJanela.map((venda) => venda.categoria)).size,
+        // EDGE CASE: sem semana anterior não existe variação. Zero aqui
+        // seria mentira ("não mudou nada"), e dividir por zero imprimiria
+        // "Infinity%". null é o único valor honesto, e vira "—" na tela.
+        variacao: faturamentoAnterior > 0
+            ? ((faturamento - faturamentoAnterior) / faturamentoAnterior) * 100
+            : null,
+    };
+}
+
+
+// ====================================================================
+// PASSO 2D: DESENHO DO PAINEL DE DESTAQUES
+// ====================================================================
+function atualizarDestaques(vendas: Venda[]): void {
+    desenharRanking(ranquearProdutos(vendas, TOTAL_DESTAQUES));
+    desenharPeriodo(recortarUltimaSemana(vendas));
+}
+
+function desenharRanking(ranking: ProdutoRanqueado[]): void {
+    const lista = document.getElementById('lista-ranking');
+    if (!lista) return;
+
+    // EDGE CASE: sem venda nenhuma, uma lista vazia e muda parece tela
+    // quebrada. A frase explica que o banco está limpo.
+    if (ranking.length === 0) {
+        lista.innerHTML = '<li class="ranking-vazio">Nenhum dado registrado.</li>';
+        return;
+    }
+
+    // .map() nº 3: cada item ranqueado vira o HTML da sua linha, e só
+    // então o join monta a lista inteira de uma vez - um innerHTML só,
+    // em vez de um por produto.
+    lista.innerHTML = ranking
+        .map((item) => '<li class="ranking-item">'
+            + '<span class="ranking-posicao">' + item.posicao + 'º</span>'
+            + '<span class="ranking-nome">' + escapar(item.produto) + '</span>'
+            + '<span class="ranking-valor">' + formatarMoeda(item.faturamento) + '</span>'
+            + '<span class="ranking-fatia">' + item.participacao.toFixed(1) + '% do total</span>'
+            + '</li>')
+        .join('');
+}
+
+// '2026-08-23' -> '23/08'. Feito na mão porque toLocaleDateString em
+// cima de uma data sem hora aplica o fuso do navegador e mostra o dia
+// anterior para quem está a oeste de Greenwich.
+function formatarDiaMes(dataIso: string): string {
+    const partes = dataIso.split('-');
+    return partes.length === 3 ? partes[2] + '/' + partes[1] : dataIso;
+}
+
+function desenharPeriodo(recorte: RecortePeriodo | null): void {
+    if (recorte === null) {
+        escreverTexto('periodo-faturamento', formatarMoeda(0));
+        escreverTexto('periodo-intervalo', 'Nenhum dado registrado.');
+        escreverTexto('periodo-detalhe', '—');
+        escreverTexto('periodo-variacao', '—');
+        return;
+    }
+
+    escreverTexto('periodo-faturamento', formatarMoeda(recorte.faturamento));
+    escreverTexto(
+        'periodo-intervalo',
+        formatarDiaMes(recorte.inicio) + ' a ' + formatarDiaMes(recorte.fim)
+    );
+
+    const plural = recorte.quantidadeVendas === 1 ? 'venda' : 'vendas';
+    const pluralCategoria = recorte.categorias === 1 ? 'categoria' : 'categorias';
+
+    escreverTexto(
+        'periodo-detalhe',
+        recorte.quantidadeVendas + ' ' + plural + ' · ' + recorte.unidades + ' un. · '
+        + recorte.categorias + ' ' + pluralCategoria
+    );
+
+    if (recorte.variacao === null) {
+        escreverTexto('periodo-variacao', 'Sem semana anterior para comparar.');
+        return;
+    }
+
+    const sinal = recorte.variacao >= 0 ? '+' : '';
+    escreverTexto(
+        'periodo-variacao',
+        sinal + recorte.variacao.toFixed(1) + '% em relação à semana anterior'
+    );
+}
+
+// EDGE CASE: erro de rede ou banco limpo apaga os destaques junto com
+// os cards. Deixar o ranking antigo na tela depois de uma falha faria o
+// usuário ler número velho achando que é o de agora.
+function zerarDestaques(): void {
+    desenharRanking([]);
+    desenharPeriodo(null);
+}
+
+
+// ====================================================================
 // PASSO 3: A TABELA DE VENDAS
 // ====================================================================
+// RUBRICA: .map() transforma a estrutura crua da API no formato que a
+// interface exige - aqui, cada número virando texto em moeda local.
+//
+// A preparação é uma etapa separada do desenho de propósito: assim dá
+// para conferir o subtotal de uma linha chamando esta função no console,
+// sem depender de ler o HTML da tabela.
+function prepararLinhas(vendas: Venda[]): LinhaTabela[] {
+    return vendas.map((venda): LinhaTabela => {
+        const quantidade = numeroSeguro(venda.quantidade);
+        const valorUnitario = numeroSeguro(venda.valor_unitario);
+
+        return {
+            identificador: '#' + numeroSeguro(venda.venda_id),
+            produto: venda.produto,
+            categoria: venda.categoria,
+            quantidade: String(quantidade),
+            valorUnitario: formatarMoeda(valorUnitario),
+            subtotal: formatarMoeda(quantidade * valorUnitario),
+        };
+    });
+}
+
 function exibirTabela(vendas: Venda[]): void {
     const tbody = document.getElementById('tabela-vendas-body');
     if (!tbody) return;
-
-    tbody.innerHTML = '';
 
     // EDGE CASE: mensagem elegante no lugar de uma tabela vazia e muda.
     if (vendas.length === 0) {
@@ -285,22 +547,18 @@ function exibirTabela(vendas: Venda[]): void {
         return;
     }
 
-    vendas.forEach((venda) => {
-        const quantidade = numeroSeguro(venda.quantidade);
-        const valorUnitario = numeroSeguro(venda.valor_unitario);
-        const subtotal = quantidade * valorUnitario;
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>#${numeroSeguro(venda.venda_id)}</td>
-            <td><strong>${escapar(venda.produto)}</strong></td>
-            <td><span class="badge badge-categoria">${escapar(venda.categoria)}</span></td>
-            <td class="text-end">${quantidade}</td>
-            <td class="text-end">${formatarMoeda(valorUnitario)}</td>
-            <td class="text-end"><strong>${formatarMoeda(subtotal)}</strong></td>
-        `;
-        tbody.appendChild(tr);
-    });
+    // Texto vindo do banco continua passando por escapar() na hora de
+    // virar HTML: o map formata número, não neutraliza script.
+    tbody.innerHTML = prepararLinhas(vendas)
+        .map((linha) => '<tr>'
+            + '<td>' + linha.identificador + '</td>'
+            + '<td><strong>' + escapar(linha.produto) + '</strong></td>'
+            + '<td><span class="badge badge-categoria">' + escapar(linha.categoria) + '</span></td>'
+            + '<td class="text-end">' + linha.quantidade + '</td>'
+            + '<td class="text-end">' + linha.valorUnitario + '</td>'
+            + '<td class="text-end"><strong>' + linha.subtotal + '</strong></td>'
+            + '</tr>')
+        .join('');
 }
 
 

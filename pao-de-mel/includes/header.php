@@ -16,7 +16,7 @@ $paginaAtual = basename($_SERVER['PHP_SELF']);
 $raiz = $raiz ?? '';
 
 // Páginas que fazem o item "Administração" ficar destacado.
-$paginasAdmin = ['index.php', 'categorias.php', 'produtos.php', 'vendas.php'];
+$paginasAdmin = ['index.php', 'categorias.php', 'ingredientes.php', 'receitas.php', 'vendas.php'];
 $estaNoAdmin  = str_contains(str_replace('\\', '/', $_SERVER['PHP_SELF']), '/admin/');
 ?>
 <!DOCTYPE html>

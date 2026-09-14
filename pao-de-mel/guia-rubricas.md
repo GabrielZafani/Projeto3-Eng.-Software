@@ -5,7 +5,7 @@ Dashboard de vendas: banco analítico, API PHP e TypeScript compilado.
 | Disciplina | Rubricas |
 |---|---|
 | **Banco de Dados Avançado** | CTEs e Views analíticas, Triggers (BEFORE UPDATE), Stored Procedures (busca/filtro/paginação), Função no banco, View centralizadora |
-| **Desenvolvimento Web Avançada** | Aparência do sistema, Bootstrap (3+ componentes), Estrutura do projeto, 3 CRUDs completos, Regras de exclusão |
+| **Desenvolvimento Web Avançada** | Aparência do sistema, Bootstrap (3+ componentes), Estrutura do projeto, 4 CRUDs completos, Regras de exclusão |
 | **Lógica Avançada** | Agregações com Reduce, Cenários de exceção |
 | **Tech Forge** | Consumo de API e fluxo assíncrono, Integração de ambientes |
 
@@ -28,12 +28,12 @@ normalmente.
 RUBRICA BANCO DE DADOS AVANÇADO - CRIAÇÃO DE CTEs E VIEWS ANALÍTICAS NO MARIADB QUE LIMPEM E
 CONSOLIDEM OS DADOS BRUTOS DO SISTEMA, ENTREGANDO-OS PERFEITAMENTE ESTRUTURADOS
 ```
-- [db/dashboard-vendas.sql:172](db/dashboard-vendas.sql#L172) - `vw_vendas_detalhadas`, a view que a API consome
-- [db/dashboard-vendas.sql:173](db/dashboard-vendas.sql#L173) - CTE `vendas_limpas`, descarta venda cancelada e quantidade zerada
-- [db/dashboard-vendas.sql:179](db/dashboard-vendas.sql#L179) - CTE `produtos_validos`, descarta preço zerado
-- [db/dashboard-vendas.sql:204](db/dashboard-vendas.sql#L204) - `vw_faturamento_categoria`, com as CTEs `por_categoria` e `total_geral`
-- [db/dashboard-vendas.sql:230](db/dashboard-vendas.sql#L230) - `vw_ranking_produtos`, com CTE e `ROW_NUMBER()`
-- [db/dashboard-vendas.sql:439](db/dashboard-vendas.sql#L439) - a procedure lendo da view, já recebe tudo limpo
+- [db/dashboard-vendas.sql:174](db/dashboard-vendas.sql#L174) - `vw_vendas_detalhadas`, a view que a API consome
+- [db/dashboard-vendas.sql:175](db/dashboard-vendas.sql#L175) - CTE `vendas_limpas`, descarta venda cancelada e quantidade zerada
+- [db/dashboard-vendas.sql:181](db/dashboard-vendas.sql#L181) - CTE `produtos_validos`, descarta preço zerado
+- [db/dashboard-vendas.sql:206](db/dashboard-vendas.sql#L206) - `vw_faturamento_categoria`, com as CTEs `por_categoria` e `total_geral`
+- [db/dashboard-vendas.sql:232](db/dashboard-vendas.sql#L232) - `vw_ranking_produtos`, com CTE e `ROW_NUMBER()`
+- [db/dashboard-vendas.sql:441](db/dashboard-vendas.sql#L441) - a procedure lendo da view, já recebe tudo limpo
 
 **Limpeza e consolidação:** a CTE (cláusula `WITH`) funciona como uma tabela
 temporária com nome. Aqui ela isola a etapa de limpar o lixo da etapa de juntar
@@ -63,12 +63,12 @@ RUBRICA BANCO DE DADOS AVANÇADO - IMPLEMENTAÇÃO DE TRIGGERS (BEFORE UPDATE) P
 A INSERÇÃO DE VALORES POSITIVOS
 ```
 **Protegendo a edição (BEFORE UPDATE):**
-- [db/dashboard-vendas.sql:92](db/dashboard-vendas.sql#L92) - `trg_vendas_valor_positivo`, protege `vendas.quantidade`
-- [db/dashboard-vendas.sql:97](db/dashboard-vendas.sql#L97) - `trg_produtos_valor_positivo`, protege `produtos.valor_unitario`
+- [db/dashboard-vendas.sql:94](db/dashboard-vendas.sql#L94) - `trg_vendas_valor_positivo`, protege `vendas.quantidade`
+- [db/dashboard-vendas.sql:99](db/dashboard-vendas.sql#L99) - `trg_produtos_valor_positivo`, protege `produtos.valor_unitario`
 
 **Protegendo o cadastro (BEFORE INSERT):**
-- [db/dashboard-vendas.sql:105](db/dashboard-vendas.sql#L105) - `trg_vendas_valor_positivo_ins`
-- [db/dashboard-vendas.sql:110](db/dashboard-vendas.sql#L110) - `trg_produtos_valor_positivo_ins`
+- [db/dashboard-vendas.sql:107](db/dashboard-vendas.sql#L107) - `trg_vendas_valor_positivo_ins`
+- [db/dashboard-vendas.sql:112](db/dashboard-vendas.sql#L112) - `trg_produtos_valor_positivo_ins`
 
 **Como padroniza:** `GREATEST(ABS(x), 1)` faz duas coisas de uma vez. O `ABS`
 transforma qualquer negativo em positivo, e o `GREATEST` garante o mínimo, já que
@@ -92,11 +92,11 @@ CENTRALIZAR A BUSCA, FILTROS E PAGINAÇÃO DOS INDICADORES DA DASHBOARD, PERMITI
 EM PHP FAÇA CHAMADAS LIMPAS (CALL) E ASSÍNCRONAS
 ```
 **No banco:**
-- [db/dashboard-vendas.sql:388](db/dashboard-vendas.sql#L388) - `sp_vendas_buscar`, a procedure principal
-- [db/dashboard-vendas.sql:423](db/dashboard-vendas.sql#L423) - a **busca**, com `LIKE CONCAT('%', p_busca, '%')`
-- [db/dashboard-vendas.sql:440](db/dashboard-vendas.sql#L440) - o **filtro** de categoria
-- [db/dashboard-vendas.sql:443](db/dashboard-vendas.sql#L443) - a **paginação**, `LIMIT v_tamanho OFFSET v_deslocamento`
-- [db/dashboard-vendas.sql:453](db/dashboard-vendas.sql#L453) - `sp_vendas_categorias`, que alimenta os botões de filtro
+- [db/dashboard-vendas.sql:390](db/dashboard-vendas.sql#L390) - `sp_vendas_buscar`, a procedure principal
+- [db/dashboard-vendas.sql:425](db/dashboard-vendas.sql#L425) - a **busca**, com `LIKE CONCAT('%', p_busca, '%')`
+- [db/dashboard-vendas.sql:442](db/dashboard-vendas.sql#L442) - o **filtro** de categoria
+- [db/dashboard-vendas.sql:445](db/dashboard-vendas.sql#L445) - a **paginação**, `LIMIT v_tamanho OFFSET v_deslocamento`
+- [db/dashboard-vendas.sql:464](db/dashboard-vendas.sql#L464) - `sp_vendas_categorias`, que alimenta os botões de filtro
 
 **A chamada limpa no PHP:**
 - [api.php:48](api.php#L48) - o `CALL sp_vendas_buscar(?, ?, ?, ?, @total_linhas, @faturamento)`
@@ -105,10 +105,10 @@ EM PHP FAÇA CHAMADAS LIMPAS (CALL) E ASSÍNCRONAS
 
 **No navegador (assíncrono):**
 - [src/app.ts:93](src/app.ts#L93) - `Promise.all` com as duas chamadas em paralelo
-- [src/app.ts:312](src/app.ts#L312) - os botões de categoria desenhados a partir do `CALL`
-- [src/app.ts:346](src/app.ts#L346) - a paginação desenhada a partir do total que a procedure contou
-- [dashboard.php:92](dashboard.php#L92) - a barra de busca e filtro na tela
-- [dashboard.php:139](dashboard.php#L139) - a navegação de páginas
+- [src/app.ts:585](src/app.ts#L585) - os botões de categoria desenhados a partir do `CALL`
+- [src/app.ts:604](src/app.ts#L604) - a paginação desenhada a partir do total que a procedure contou
+- [dashboard.php:137](dashboard.php#L137) - a barra de busca e filtro na tela
+- [dashboard.php:184](dashboard.php#L184) - a navegação de páginas
 
 **O que "chamada limpa" quer dizer aqui:** a `api.php` não monta mais nenhum
 `SELECT`. Ela lê quatro valores do `$_GET`, repassa como parâmetro e faz `CALL`.
@@ -118,7 +118,7 @@ procedure, onde o banco pode otimizar.
 **Por que a dashboard faz duas chamadas:** a tabela mostra a página atual, mas os
 cards precisam somar o filtro inteiro. Por isso o parâmetro `p_tamanho = 0`
 significa "traz tudo, sem paginar". Sem isso, o card "Faturamento total" cairia
-de R$ 6.376,00 para o total de 10 linhas e mudaria toda vez que o professor
+de R$ 15.953,00 para o total de 10 linhas e mudaria toda vez que o professor
 clicasse em "próxima página" — pareceria defeito no meio da apresentação.
 
 **Segurança:** nada aqui é SQL montado como texto. O que o usuário digita entra
@@ -139,8 +139,8 @@ tabela `vendas` intacta logo em seguida.
 RUBRICA BANCO DE DADOS AVANÇADO - CRIAÇÃO DE UMA FUNÇÃO NO BANCO DE DADOS PARA REUTILIZAÇÃO
 DE SCRIPTS MASSIVOS OU COMPLEXOS
 ```
-- [db/dashboard-vendas.sql:271](db/dashboard-vendas.sql#L271) - `fn_faturamento_periodo`, a função
-- [db/dashboard-vendas.sql:427](db/dashboard-vendas.sql#L427) - a procedure **reutilizando** a função
+- [db/dashboard-vendas.sql:273](db/dashboard-vendas.sql#L273) - `fn_faturamento_periodo`, a função
+- [db/dashboard-vendas.sql:429](db/dashboard-vendas.sql#L429) - a procedure **reutilizando** a função
 - [db/testes-demonstracao.sql](db/testes-demonstracao.sql) - teste 9, chamando a função direto
 
 **O script que ela encapsula:** para saber o faturamento de um intervalo era
@@ -169,16 +169,16 @@ e a tela imprimia "R$ NaN". Por isso a linha é
 3. Para mostrar o código dela: `SHOW CREATE FUNCTION fn_faturamento_periodo;`
    — mas o MariaDB **apaga os comentários** nesse resultado. Os comentários que
    explicam o porquê estão em
-   [db/dashboard-vendas.sql:271](db/dashboard-vendas.sql#L271); deixe esse arquivo
+   [db/dashboard-vendas.sql:273](db/dashboard-vendas.sql#L273); deixe esse arquivo
    aberto ao lado.
 4. Para provar a reutilização, mostre a linha
-   [db/dashboard-vendas.sql:427](db/dashboard-vendas.sql#L427): é a procedure
+   [db/dashboard-vendas.sql:429](db/dashboard-vendas.sql#L429): é a procedure
    chamando a função em vez de repetir o `SUM`.
 
 **Prova cruzada:** o `6376.00` da função é o mesmo número que o `reduce` do
 TypeScript calcula por outro caminho. A dashboard confere os dois sozinha e
 escreve o resultado no console do navegador (`F12` → aba Console):
-[src/app.ts:187](src/app.ts#L187).
+[src/app.ts:190](src/app.ts#L190).
 
 ---
 
@@ -187,9 +187,9 @@ escreve o resultado no console do navegador (`F12` → aba Console):
 RUBRICA BANCO DE DADOS AVANÇADO - CRIAÇÃO DE VIEW QUE CENTRALIZE INFORMAÇÕES IMPORTANTES NO
 SISTEMA E QUE ESTÃO EM DIVERSAS TABELAS DISTINTAS
 ```
-- [db/dashboard-vendas.sql:314](db/dashboard-vendas.sql#L314) - `vw_painel_produtos`, a view
-- [db/dashboard-vendas.sql:315](db/dashboard-vendas.sql#L315) - CTE `totais_venda`, agrega as vendas antes do join
-- [db/dashboard-vendas.sql:326](db/dashboard-vendas.sql#L326) - CTE `ingredientes_da_receita`, junta ingrediente e unidade
+- [db/dashboard-vendas.sql:316](db/dashboard-vendas.sql#L316) - `vw_painel_produtos`, a view
+- [db/dashboard-vendas.sql:317](db/dashboard-vendas.sql#L317) - CTE `totais_venda`, agrega as vendas antes do join
+- [db/dashboard-vendas.sql:328](db/dashboard-vendas.sql#L328) - CTE `ingredientes_da_receita`, junta ingrediente e unidade
 
 **As seis tabelas que ela centraliza:** `produtos`, `receitas`, `categorias`,
 `vendas`, `receita_ingrediente` e `ingredientes`. Cada linha é um produto, e traz
@@ -224,7 +224,7 @@ ARQUIVOS SEPARADOS PARA MELHORAR A MANUTENÇÃO?
 | Pasta | O que mora ali | Por que separado |
 |---|---|---|
 | raiz | as 5 páginas do site (`index`, `receitas`, `receita-detalhe`, `contato`, `dashboard`) | é o que o visitante acessa |
-| `admin/` | as 4 telas de cadastro | administração não se mistura com o site público |
+| `admin/` | as 5 telas de administração | administração não se mistura com o site público |
 | `includes/` | conexão, template, funções, regras dos CRUDs | tudo que é reaproveitado por mais de uma página |
 | `db/` | scripts SQL e roteiro de testes | o banco versionado junto com o código |
 | `src/` | TypeScript que você edita | fonte |
@@ -238,7 +238,7 @@ ARQUIVOS SEPARADOS PARA MELHORAR A MANUTENÇÃO?
 - [includes/admin.php:23](includes/admin.php#L23) - mensagem, token e leitura de formulário. Sem ele, isso estaria copiado nas três telas de cadastro — e bastaria esquecer um para abrir um buraco.
 
 **A separação que mais importa: tela não conhece regra.**
-- [includes/crud-categorias.php](includes/crud-categorias.php), [includes/crud-produtos.php](includes/crud-produtos.php) e [includes/crud-vendas.php](includes/crud-vendas.php) têm as regras.
+- [includes/crud-categorias.php](includes/crud-categorias.php), [includes/crud-ingredientes.php](includes/crud-ingredientes.php), [includes/crud-receitas.php](includes/crud-receitas.php) e [includes/crud-vendas.php](includes/crud-vendas.php) têm as regras.
 - [admin/categorias.php:28](admin/categorias.php#L28) só chama a função e mostra a frase que voltou.
 
 **Como demonstrar em 10 segundos:** abra [includes/crud-vendas.php:139](includes/crud-vendas.php#L139) e
@@ -248,25 +248,49 @@ manutenção.
 
 ---
 
-### Três CRUDs completos
+### Quatro CRUDs completos
 ```
 RUBRICA DESENVOLVIMENTO WEB AVANÇADA - 3 CRUDS: O ALUNO FINALIZOU OS 3 CRUDS COMPLETOS?
 COM A INCLUSÃO, EXCLUSÃO, EDIÇÃO E CONSULTA?
 ```
-| CRUD | Tela | Regras |
-|---|---|---|
-| **Categorias** | [admin/categorias.php](admin/categorias.php) | [includes/crud-categorias.php](includes/crud-categorias.php) |
-| **Produtos** | [admin/produtos.php](admin/produtos.php) | [includes/crud-produtos.php](includes/crud-produtos.php) |
-| **Vendas** | [admin/vendas.php](admin/vendas.php) | [includes/crud-vendas.php](includes/crud-vendas.php) |
+A rubrica pede 3. **São 4**, e eles cobrem a cadeia de cadastro da padaria —
+cada um depende do anterior:
+
+| # | CRUD | Tela | Regras |
+|---|---|---|---|
+| 1 | **Categorias** | [admin/categorias.php](admin/categorias.php) | [includes/crud-categorias.php](includes/crud-categorias.php) |
+| 2 | **Ingredientes** | [admin/ingredientes.php](admin/ingredientes.php) | [includes/crud-ingredientes.php](includes/crud-ingredientes.php) |
+| 3 | **Receitas** | [admin/receitas.php](admin/receitas.php) | [includes/crud-receitas.php](includes/crud-receitas.php) |
+| 4 | **Vendas** | [admin/vendas.php](admin/vendas.php) | [includes/crud-vendas.php](includes/crud-vendas.php) |
 
 **As quatro operações, uma por uma:**
 
-| Operação | Categorias | Produtos | Vendas |
-|---|---|---|---|
-| **Inclusão** | [crud-categorias.php:48](includes/crud-categorias.php#L48) | [crud-produtos.php:57](includes/crud-produtos.php#L57) | [crud-vendas.php:65](includes/crud-vendas.php#L65) |
-| **Consulta** | [crud-categorias.php:21](includes/crud-categorias.php#L21) | [crud-produtos.php:24](includes/crud-produtos.php#L24) | [crud-vendas.php:21](includes/crud-vendas.php#L21) |
-| **Edição** | mesma função da inclusão, com `id > 0` | idem | idem |
-| **Exclusão** | [crud-categorias.php:87](includes/crud-categorias.php#L87) | [crud-produtos.php:112](includes/crud-produtos.php#L112) | [crud-vendas.php:139](includes/crud-vendas.php#L139) |
+| Operação | Categorias | Ingredientes | Receitas | Vendas |
+|---|---|---|---|---|
+| **Inclusão** | [:48](includes/crud-categorias.php#L48) | [:48](includes/crud-ingredientes.php#L48) | [:51](includes/crud-receitas.php#L51) | [:65](includes/crud-vendas.php#L65) |
+| **Consulta** | [:21](includes/crud-categorias.php#L21) | [:24](includes/crud-ingredientes.php#L24) | [:21](includes/crud-receitas.php#L21) | [:21](includes/crud-vendas.php#L21) |
+| **Edição** | a mesma função da inclusão, com `id > 0` | idem | idem | idem |
+| **Exclusão** | [:87](includes/crud-categorias.php#L87) | [:87](includes/crud-ingredientes.php#L87) | [:125](includes/crud-receitas.php#L125) | [:139](includes/crud-vendas.php#L139) |
+
+**O relacionamento N:N, que é a parte difícil:** uma receita tem vários
+ingredientes, cada um com sua quantidade, na tabela `receita_ingrediente` —
+chave primária composta por `(id_receita, id_ingrediente)`.
+
+- [includes/crud-receitas.php:211](includes/crud-receitas.php#L211) - acrescentar ingrediente na receita
+- [includes/crud-receitas.php:242](includes/crud-receitas.php#L242) - o `catch` do erro 1062: **o banco** recusa o mesmo ingrediente duas vezes
+- [includes/crud-receitas.php:255](includes/crud-receitas.php#L255) - remover, avisando se a receita ficou sem nenhum
+- [includes/crud-receitas.php:197](includes/crud-receitas.php#L197) - o seletor só oferece o que ainda não está na receita
+- [admin/receitas.php:49](admin/receitas.php#L49) - a tela repassando a ação
+
+**Por que os ingredientes só aparecem ao editar, e não ao criar:** a linha em
+`receita_ingrediente` precisa do id da receita, que só existe depois de gravada.
+Por isso o botão diz "Cadastrar e escolher ingredientes" e a tela já abre a
+receita nova em edição — [admin/receitas.php:42](admin/receitas.php#L42).
+
+**A consequência visível:** receita sem ingrediente **não aparece no site**,
+porque `filtrarReceitasValidas()` a descarta. A tela avisa isso em três lugares
+em vez de deixar o usuário achar que o site quebrou: na mensagem ao cadastrar, no
+quadro de ingredientes vazio e na lista de receitas.
 
 **Por que inclusão e edição são a mesma função:** o formulário é idêntico nos dois
 casos; muda só se o `id` vem zerado ou não. Duas funções separadas seriam duas
@@ -299,27 +323,29 @@ diferente com o histórico:
 | Excluir | O que acontece | Mensagem que aparece |
 |---|---|---|
 | **Categoria** | apaga de verdade — mas o **banco recusa** se houver receita usando | *"Não dá para excluir "Salgado": 3 receitas usam esta categoria. Mude a categoria dessas receitas primeiro."* |
-| **Produto** | sai de linha, não é apagado | *""Empada de Palmito" saiu de linha e não aparece mais para novas vendas. A venda que ele já teve continua contando no faturamento."* |
-| **Venda** | é cancelada, não apagada | *"Venda #21 cancelada. O registro continua no banco para consulta, mas saiu do faturamento: de R$ 6.376,00 para R$ 5.792,00."* |
+| **Venda** | é cancelada, não apagada | *"Venda #21 cancelada. O registro continua no banco para consulta, mas saiu do faturamento: de R$ 15.953,00 para R$ 15.369,00."* |
+| **Ingrediente** | apaga do catálogo — mas o **banco recusa** se alguma receita usar | *"Não dá para excluir "Farinha de trigo": ele está em Bolo de Cenoura, Bolo de Fubá, Brioche Caseiro e mais 6. Tire o ingrediente dessas receitas primeiro."* |
+| **Receita** | recusa se houver produto; sem produto, apaga junto com os vínculos | *"Não dá para excluir "Bolo de Laranja": o produto Bolo de Laranja (inteiro) nasce dela, e produto tem histórico de venda. Exclua o produto primeiro."* |
 
 - [includes/crud-categorias.php:105](includes/crud-categorias.php#L105) - o `catch` do erro 1451 do banco
-- [includes/crud-produtos.php:112](includes/crud-produtos.php#L112) - tirar de linha, com a contagem de vendas na mensagem
 - [includes/crud-vendas.php:139](includes/crud-vendas.php#L139) - cancelar, medindo o faturamento antes e depois
-- [admin/index.php:70](admin/index.php#L70) - as três regras escritas na tela do painel
+- [includes/crud-ingredientes.php:104](includes/crud-ingredientes.php#L104) - o `catch` do 1451, que ainda pergunta ao banco **quais** receitas usam
+- [includes/crud-receitas.php:125](includes/crud-receitas.php#L125) - recusa por produto, e transação para apagar os vínculos junto
+- [admin/index.php:110](admin/index.php#L110) - as cinco regras escritas na tela do painel
 
 **A frase que vale a nota:** a tela **não decide** se pode excluir. Ela tenta, o
 banco recusa pela chave estrangeira, e só então o PHP conta quantas receitas
 estavam segurando para escrever o motivo. Quem apagar pelo DBeaver, sem passar
 por tela nenhuma, esbarra na mesma trava.
 
-**Por que a mensagem da venda mostra dois valores:** *"de R$ 6.376,00 para
-R$ 5.792,00"* prova que a exclusão mexeu no sistema inteiro, e não só apagou uma
+**Por que a mensagem da venda mostra dois valores:** *"de R$ 15.953,00 para
+R$ 15.369,00"* prova que a exclusão mexeu no sistema inteiro, e não só apagou uma
 linha de tabela. Abra a dashboard e dê F5: o número mudou lá também.
 
 **Prova:** teste 13 de [db/testes-demonstracao.sql](db/testes-demonstracao.sql).
 O 13A tenta apagar "Salgado" direto no SQL e recebe o erro 1451; o 13D tira a
 Coxinha de linha e mostra o faturamento **não** mudando; o 13E cancela a venda 21
-e mostra R$ 6.376,00 virando R$ 5.792,00 com o registro ainda no banco.
+e mostra R$ 15.953,00 virando R$ 15.369,00 com o registro ainda no banco.
 
 ---
 
@@ -328,12 +354,13 @@ e mostra R$ 6.376,00 virando R$ 5.792,00 com o registro ainda no banco.
 RUBRICA DESENVOLVIMENTO WEB AVANÇADA - O SISTEMA POSSUI INTERFACE AMIGÁVEL, POSSUINDO USABILIDADE
 PARA FACILITAR PARA QUE O USUÁRIO NÃO TENHA DE FICAR PROCURANDO AS TAREFAS
 ```
-- [includes/header.php:39](includes/header.php#L39) - menu fixo no topo, em todas as páginas
-- [includes/funcoes.php:38](includes/funcoes.php#L38) - o item do menu da página atual fica destacado
+- [includes/header.php:57](includes/header.php#L57) - menu fixo no topo, em todas as páginas
+- [includes/funcoes.php:66](includes/funcoes.php#L66) - o item do menu da página atual fica destacado
 - [receitas.php:24](receitas.php#L24) - filtro por categoria em chips, um clique
-- [dashboard.php:44](dashboard.php#L44) - os 4 números mais importantes no topo, antes da tabela
-- [dashboard.php:92](dashboard.php#L92) - busca e filtro na dashboard, no mesmo formato de chip do resto do site
-- [dashboard.php:115](dashboard.php#L115) - a linha "22 vendas encontradas · página 1 de 3"
+- [includes/funcoes.php:158](includes/funcoes.php#L158) - os chips saem da TABELA de categorias, não das receitas carregadas
+- [dashboard.php:49](dashboard.php#L49) - os 4 números mais importantes no topo, antes da tabela
+- [dashboard.php:137](dashboard.php#L137) - busca e filtro na dashboard, no mesmo formato de chip do resto do site
+- [dashboard.php:160](dashboard.php#L160) - a linha "66 vendas encontradas · página 1 de 7"
 - [assets/css/style.css](assets/css/style.css) - paleta da padaria (mel, massa, crosta)
 
 **O usuário não precisa procurar:** toda tarefa do sistema está a **um clique**
@@ -346,10 +373,16 @@ em vez de ficar em branco; a dashboard exibe o estado de carregamento em vez de
 parecer travada; e os controles ficam desabilitados enquanto a busca não volta,
 para ninguém disparar duas consultas em cima da outra.
 
+**A categoria nova aparece na hora, nos dois filtros:** tanto os chips da página
+de receitas quanto os da dashboard saem agora da tabela `categorias`, e não do
+que já tem receita ou venda. Antes, quem cadastrava uma categoria não a via em
+lugar nenhum e achava que o cadastro tinha falhado. Clicar numa categoria ainda
+vazia cai no aviso de "nenhum resultado", que já existia.
+
 **Detalhe que só aparece usando:** o aviso de tela vazia muda de texto conforme o
 motivo. Banco sem venda nenhuma é problema ("Nenhum dado registrado"); filtro que
 não achou nada é uso normal ("Nenhuma venda com esse filtro. Tente outra
-categoria ou limpe a busca") — [src/app.ts:445](src/app.ts#L445).
+categoria ou limpe a busca") — [src/app.ts:710](src/app.ts#L710).
 
 ---
 
@@ -358,8 +391,8 @@ categoria ou limpe a busca") — [src/app.ts:445](src/app.ts#L445).
 RUBRICA DESENVOLVIMENTO WEB AVANÇADA - USOU O FRAMEWORK BOOTSTRAP NO DESENVOLVIMENTO DO LAYOUT,
 PELO MENOS 3 COMPONENTES
 ```
-- [includes/header.php:22](includes/header.php#L22) - o CSS do Bootstrap 5.3 carregado via CDN
-- [includes/header.php:33](includes/header.php#L33) - **Navbar**, com **Collapse** no botão de menu do celular
+- [includes/header.php:32](includes/header.php#L32) - o CSS do Bootstrap 5.3 carregado via CDN
+- [includes/header.php:51](includes/header.php#L51) - **Navbar**, com **Collapse** no botão de menu do celular
 - [index.php:45](index.php#L45) - **Card** e **Badge** nos destaques
 - [receitas.php:42](receitas.php#L42) - **Card** e **Badge** na listagem
 - [receita-detalhe.php:26](receita-detalhe.php#L26) - **Badge** da categoria
@@ -367,9 +400,9 @@ PELO MENOS 3 COMPONENTES
 - [dashboard.php:22](dashboard.php#L22) - **Spinner** do carregamento
 - [dashboard.php:30](dashboard.php#L30) - **Alert** do erro de conexão
 - [dashboard.php:52](dashboard.php#L52) - **Card** das métricas
-- [dashboard.php:93](dashboard.php#L93) - **Input group** da busca
-- [dashboard.php:117](dashboard.php#L117) - **Table** responsiva das vendas
-- [dashboard.php:139](dashboard.php#L139) - **Pagination** das páginas de venda
+- [dashboard.php:138](dashboard.php#L138) - **Input group** da busca
+- [dashboard.php:162](dashboard.php#L162) - **Table** responsiva das vendas
+- [dashboard.php:184](dashboard.php#L184) - **Pagination** das páginas de venda
 
 **Contagem:** são 10 componentes distintos (Navbar, Collapse, Card, Badge, Form,
 Button, Spinner, Alert, Table, Input group e Pagination), além do Grid usado em
@@ -383,11 +416,11 @@ todas as páginas. A rubrica pede no mínimo 3. Só na dashboard são 7 deles.
 ```
 RUBRICA LÓGICA AVANÇADA - AGREGAÇÕES E CÁLCULOS FINANCEIROS (USO DE REDUCE)
 ```
-- [src/app.ts:219](src/app.ts#L219) - **faturamento total**, `reduce` acumulando `quantidade * valor_unitario`
-- [src/app.ts:226](src/app.ts#L226) - **unidades vendidas**, `reduce` somando as quantidades
-- [src/app.ts:239](src/app.ts#L239) - **por produto**, `reduce` que acumula um objeto
-- [src/app.ts:247](src/app.ts#L247) - **campeão de vendas**, `reduce` achando o maior
-- [db/dashboard-vendas.sql:432](db/dashboard-vendas.sql#L432) - as colunas cruas que a procedure devolve
+- [src/app.ts:222](src/app.ts#L222) - **faturamento total**, `reduce` acumulando `quantidade * valor_unitario`
+- [src/app.ts:229](src/app.ts#L229) - **unidades vendidas**, `reduce` somando as quantidades
+- [src/app.ts:242](src/app.ts#L242) - **por produto**, `reduce` que acumula um objeto
+- [src/app.ts:250](src/app.ts#L250) - **campeão de vendas**, `reduce` achando o maior
+- [db/dashboard-vendas.sql:434](db/dashboard-vendas.sql#L434) - as colunas cruas que a procedure devolve
 
 **O ponto da rubrica:** o banco **não** manda o total pronto. A procedure devolve
 as linhas cruas, com `quantidade` e `valor_unitario` em colunas separadas, e é o
@@ -395,13 +428,13 @@ as linhas cruas, com `quantidade` e `valor_unitario` em colunas separadas, e é 
 cresce a cada linha.
 
 **Onde isso fica visível:** clique da página 1 para a 2. A tabela troca as 10
-linhas, mas os cards continuam em R$ 6.376,00 — porque o `reduce` roda sobre o
+linhas, mas os cards continuam em R$ 15.953,00 — porque o `reduce` roda sobre o
 filtro inteiro, e não sobre a página. Agora clique no filtro "Bolo": aí sim os
-cards mudam para R$ 706,00.
+cards mudam para R$ 1.850,00.
 
 **Prova:** rode o teste 6 de [db/testes-demonstracao.sql](db/testes-demonstracao.sql)
-e compare com os cards na tela. Os dois têm que dar **R$ 6.376,00** e **587
-unidades**.
+e compare com os cards na tela. Os dois têm que dar **R$ 15.953,00** e
+**1462 unidades**.
 
 ---
 
@@ -410,15 +443,15 @@ unidades**.
 RUBRICA LÓGICA AVANÇADA - TRATAMENTO DE CENÁRIOS DE EXCEÇÃO (EDGE CASES)
 ```
 - [src/app.ts:29](src/app.ts#L29) - `numeroSeguro()`, a barreira contra `NaN`
-- [src/app.ts:166](src/app.ts#L166) - `validarResposta()`, confere o formato antes de confiar
-- [src/app.ts:173](src/app.ts#L173) - valida se veio mesmo um array antes do `reduce`
+- [src/app.ts:169](src/app.ts#L169) - `validarResposta()`, confere o formato antes de confiar
+- [src/app.ts:176](src/app.ts#L176) - valida se veio mesmo um array antes do `reduce`
 - [src/app.ts:120](src/app.ts#L120) - pediu uma página que não existe mais: volta para a 1 sozinho
 - [src/app.ts:133](src/app.ts#L133) - filtro sem resultado: mostra aviso em vez de dividir por zero
-- [src/app.ts:264](src/app.ts#L264) - `zerarCards()` imprime `R$ 0,00`, nunca `R$ NaN`
-- [src/app.ts:282](src/app.ts#L282) - tabela vazia exibe **"Nenhum dado registrado"**
+- [src/app.ts:267](src/app.ts#L267) - `zerarCards()` imprime `R$ 0,00`, nunca `R$ NaN`
+- [src/app.ts:546](src/app.ts#L546) - tabela vazia exibe **"Nenhum dado registrado"**
 - [src/app.ts:51](src/app.ts#L51) - `escapar()`, para nome de produto não virar HTML
 - [src/app.ts:76](src/app.ts#L76) - trava de uma busca por vez
-- [db/dashboard-vendas.sql:408](db/dashboard-vendas.sql#L408) - página 0 ou negativa tratada dentro do banco
+- [db/dashboard-vendas.sql:410](db/dashboard-vendas.sql#L410) - página 0 ou negativa tratada dentro do banco
 
 **Por que `numeroSeguro()` existe:** o MySQL manda `DECIMAL` como texto
 (`"8.00"`). Se vier `null` ou lixo, `Number()` devolve `NaN`, e basta um `NaN`
@@ -460,7 +493,7 @@ RUBRICA TECH FORGE - CONSUMO DE API E RESOLUÇÃO DE FLUXO ASSÍNCRONO
 - [src/app.ts:78](src/app.ts#L78) - `async function` com `await fetch` na api.php
 - [src/app.ts:93](src/app.ts#L93) - `Promise.all`: as duas chamadas saem juntas, não uma depois da outra
 - [src/app.ts:100](src/app.ts#L100) - checa `resposta.ok`
-- [src/app.ts:148](src/app.ts#L148) - `catch` que trata erro de rede e de banco
+- [src/app.ts:150](src/app.ts#L150) - `catch` que trata erro de rede e de banco
 
 **A sutileza do `resposta.ok`:** o `fetch` só rejeita a promise em falha de rede.
 Se o servidor responder 500, ele considera sucesso, porque a resposta chegou. Por
@@ -493,7 +526,7 @@ RUBRICA TECH FORGE - INTEGRAÇÃO DE AMBIENTES (XAMPP + COMPILAÇÃO TYPESCRIPT)
 - [src/app.ts](src/app.ts) - o código-fonte que você edita
 - [src/types.ts](src/types.ts) - o contrato dos dados que a API devolve
 - [dist/app.js](dist/app.js) - o resultado da compilação, que o navegador carrega
-- [dashboard.php:149](dashboard.php#L149) - a página carregando o `.js` compilado
+- [dashboard.php:194](dashboard.php#L194) - a página carregando o `.js` compilado
 
 **O fluxo completo:** `src/app.ts` passa pelo `npx tsc`, vira `dist/app.js`, é
 chamado pela tag `<script>` da página, o Apache serve e o navegador executa.
@@ -502,7 +535,7 @@ chamado pela tag `<script>` da página, o Apache serve e o navegador executa.
 `http://localhost/pao-de-mel/dashboard.php`.
 
 **Como demonstrar ao vivo:** mude o texto "Nenhum dado registrado" em
-[src/app.ts:284](src/app.ts#L284), rode `npx tsc`, dê F5 e o texto novo aparece.
+[src/app.ts:711](src/app.ts#L711), rode `npx tsc`, dê F5 e o texto novo aparece.
 Isso prova que a compilação é real, e não um `.js` escrito à mão.
 
 ---
@@ -523,16 +556,18 @@ Isso prova que a compilação é real, e não um `.js` escrito à mão.
 |---|---|
 | Vendas na tabela bruta | 23 |
 | Vendas na `vw_vendas_detalhadas` | 22 (a venda cancelada some) |
-| Faturamento total | R$ 6.376,00 |
+| Faturamento total | R$ 15.953,00 |
 | Unidades vendidas | 587 |
 | Ticket médio | R$ 289,82 |
 | Campeão de vendas | Coxinha de Frango, R$ 1.888,00 |
 | Páginas na dashboard | 3 (10 + 10 + 2) |
-| Filtro "Bolo" | 4 vendas, R$ 706,00 |
+| Filtro "Bolo" | 4 vendas, R$ 1.850,00 |
 | Busca "coxinha" | 4 vendas, R$ 1.888,00 |
 | Linhas na `vw_painel_produtos` | 9 (uma por produto) |
 | Categorias cadastradas | 4 |
-| Produtos cadastrados | 9, sendo 1 fora de linha |
+| Receitas cadastradas | 9, todas com ingredientes |
+| Ingredientes no catálogo | 22 |
+| Excluir "Farinha de trigo" | recusado: está em 9 receitas |
+| Receita sem ingrediente | não aparece no site |
 | Excluir "Salgado" | recusado: 3 receitas usam |
-| Cancelar a venda #21 | R$ 6.376,00 → R$ 5.792,00 |
-| Tirar a Coxinha de linha | faturamento **não** muda |
+| Cancelar a venda #21 | R$ 15.953,00 → R$ 15.369,00 |

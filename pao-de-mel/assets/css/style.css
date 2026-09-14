@@ -541,3 +541,213 @@ h1, h2, h3 {
   font-size: 0.78rem;
   padding: 0.2rem 0.7rem;
 }
+
+/* ============================================================
+   RECEITAS: INGREDIENTES E FLUXO DE CADASTRO
+   ============================================================ */
+
+/* Lista dos ingredientes já ligados à receita */
+.lista-vinculos {
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  border-top: 1px solid var(--dough);
+}
+
+.lista-vinculos li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--dough);
+}
+
+.vinculo-texto {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--crust-dark);
+}
+
+.separador-form {
+  border-color: var(--dough);
+  margin: 1.5rem 0;
+}
+
+.rotulo-bloco {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--crust);
+  margin-bottom: 0.8rem;
+}
+
+.form-vinculo .form-label {
+  font-size: 0.82rem;
+  margin-bottom: 0.25rem;
+}
+
+/* Quadro de instruções que ocupa o lugar dos ingredientes enquanto a
+   receita ainda não foi gravada. Sem ele a coluna ficava vazia e parecia
+   que faltava alguma coisa na tela. */
+.admin-aviso-lateral {
+  background: var(--dough);
+  border-left: 3px solid var(--honey);
+  padding: 1.3rem 1.5rem;
+}
+
+.admin-aviso-lateral p { margin-bottom: 0.8rem; }
+.admin-aviso-lateral p:last-child { margin-bottom: 0; }
+
+.passos-curtos {
+  margin: 0 0 1rem;
+  padding-left: 1.2rem;
+}
+
+.passos-curtos li { margin-bottom: 0.4rem; }
+
+/* Ordem de cadastro, no painel */
+.admin-fluxo {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--dough);
+}
+
+.fluxo-etapas {
+  counter-reset: etapa;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+
+.fluxo-etapas li {
+  counter-increment: etapa;
+  flex: 1 1 9rem;
+  background: #fff;
+  border: 1px solid var(--dough);
+  padding: 0.9rem 1rem;
+  position: relative;
+}
+
+.fluxo-etapas li::before {
+  content: counter(etapa);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--honey);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.fluxo-etapas strong {
+  display: block;
+  color: var(--crust-dark);
+  font-size: 0.95rem;
+}
+
+.fluxo-etapas span {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--crust);
+  margin-top: 0.15rem;
+}
+
+
+/* ------------------------------------------------------------
+   Painel de destaques: ranking dos produtos e recorte da semana.
+   Mesma linguagem dos cards de métrica (massa, mel, canto suave),
+   para o painel novo não parecer colado de outro site.
+   ------------------------------------------------------------ */
+
+.destaques { margin-top: 2.5rem; }
+
+.destaques .section-title-sm { margin-bottom: 1rem; }
+
+.lista-ranking {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Grade de duas faixas: nome e valor na primeira, a participação
+   embaixo. Em grade, e não em flex, para o valor em R$ ficar alinhado
+   à direita mesmo quando o nome do produto quebra em duas linhas. */
+.ranking-item {
+  display: grid;
+  grid-template-columns: 2.2rem 1fr auto;
+  grid-template-areas:
+    "posicao nome  valor"
+    "posicao fatia fatia";
+  align-items: baseline;
+  gap: 0.15rem 0.7rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--dough);
+}
+
+.ranking-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.ranking-posicao {
+  grid-area: posicao;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.95rem;
+  color: var(--honey);
+}
+
+.ranking-nome {
+  grid-area: nome;
+  font-weight: 600;
+  color: var(--crust-dark);
+}
+
+.ranking-valor {
+  grid-area: valor;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.05rem;
+  color: var(--crust-dark);
+  /* Sem isto, "R$ 1.888,00" quebrava no meio quando o nome do produto
+     era longo, e o centavo descia sozinho para a linha de baixo. */
+  white-space: nowrap;
+}
+
+.ranking-fatia {
+  grid-area: fatia;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--crust);
+  opacity: 0.75;
+}
+
+.ranking-vazio {
+  color: var(--crust);
+  opacity: 0.7;
+  padding: 0.7rem 0;
+}
+
+.periodo-intervalo {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--honey);
+  margin: 0.2rem 0 0.7rem;
+}
+
+.periodo-detalhe {
+  font-size: 0.85rem;
+  color: var(--crust);
+  margin-bottom: 0.6rem;
+}
+
+.periodo-variacao {
+  font-size: 0.8rem;
+  color: var(--crust);
+  opacity: 0.8;
+  margin-bottom: 0;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--dough);
+}

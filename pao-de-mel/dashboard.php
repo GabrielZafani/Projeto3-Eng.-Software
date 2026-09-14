@@ -84,6 +84,51 @@ require 'includes/header.php'; // RUBRICA DESENVOLVIMENTO WEB MODERNA - UTILIZA�
 </section>
 
 <!--
+  RUBRICA - ALGORITMOS DE RANKING E FREQUÊNCIA (DESTAQUES)
+  RUBRICA - SEGMENTAÇÃO E FILTROS DE NEGÓCIO (USO DE FILTER)
+  RUBRICA - TRANSFORMAÇÃO E FORMATAÇÃO DE ESTRUTURAS (USO DE MAP)
+
+  Os dois blocos abaixo não custam nenhuma consulta a mais: saem do
+  mesmo array bruto que já alimentou os cards. O ranking usa um objeto
+  de contagem com o nome do produto como chave, o recorte da semana usa
+  .filter(), e o texto de cada linha sai de .map().
+
+  A semana mostrada é a última COM MOVIMENTO, não os sete dias a contar
+  de hoje - senão o painel apareceria zerado sempre que o banco de
+  demonstração ficasse alguns dias sem venda nova.
+
+  Bootstrap: componentes Card e Grid (row/col).
+-->
+<section class="container destaques">
+  <h2 class="section-title-sm">Destaques</h2>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="card card-metrica">
+        <div class="card-body">
+          <p class="metrica-rotulo">Top 3 produtos por faturamento</p>
+          <ol id="lista-ranking" class="lista-ranking">
+            <li class="ranking-vazio">—</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="card card-metrica">
+        <div class="card-body">
+          <p class="metrica-rotulo">Última semana de movimento</p>
+          <p class="metrica-valor" id="periodo-faturamento">—</p>
+          <p class="periodo-intervalo" id="periodo-intervalo">—</p>
+          <p class="periodo-detalhe" id="periodo-detalhe">—</p>
+          <p class="periodo-variacao" id="periodo-variacao">—</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!--
   RUBRICA - STORED PROCEDURES: BUSCA, FILTRO E PAGINAÇÃO
   Nenhum destes controles filtra no navegador. Cada mexida aqui vira um
   CALL sp_vendas_buscar() no banco, com os valores como parâmetro.

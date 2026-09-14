@@ -12,7 +12,7 @@ $categoriaSelecionada = isset($_GET['categoria']) ? $_GET['categoria'] : 'todas'
 
 // RUBRICA TECH FORGE - LÓGICA DE PESQUISA OU FILTRO
 $receitasExibidas = filtrarPorCategoria($receitas, $categoriaSelecionada);
-$categorias = obterCategorias($receitas);
+$categorias = $categoriasCadastradas;
 ?>
 
 <section class="container page-header">

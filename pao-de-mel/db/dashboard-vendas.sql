@@ -65,8 +65,10 @@ CREATE TABLE vendas (
 --
 -- O IF NOT EXISTS deixa o script continuar rodável quantas vezes quiser
 -- (a tabela categorias, ao contrário de produtos, não é recriada aqui).
-ALTER TABLE categorias ADD UNIQUE INDEX IF NOT EXISTS uk_categorias_nome (nome);
-ALTER TABLE produtos   ADD UNIQUE INDEX IF NOT EXISTS uk_produtos_nome   (nome);
+ALTER TABLE categorias   ADD UNIQUE INDEX IF NOT EXISTS uk_categorias_nome   (nome);
+ALTER TABLE produtos     ADD UNIQUE INDEX IF NOT EXISTS uk_produtos_nome     (nome);
+ALTER TABLE receitas     ADD UNIQUE INDEX IF NOT EXISTS uk_receitas_nome     (nome);
+ALTER TABLE ingredientes ADD UNIQUE INDEX IF NOT EXISTS uk_ingredientes_nome (nome);
 
 
 -- ============================================================
@@ -446,18 +448,28 @@ END //
 
 -- ------------------------------------------------------------
 -- sp_vendas_categorias
--- Devolve as categorias que REALMENTE têm venda limpa, já com a
--- contagem. A tela monta os botões de filtro a partir daqui, então
--- nunca aparece na barra um botão que não filtra nada.
+-- Devolve TODAS as categorias cadastradas, com a contagem de vendas
+-- de cada uma - inclusive as que ainda estão em zero.
+--
+-- A primeira versão listava só as categorias que já tinham venda, para
+-- não desenhar botão que não filtra nada. O efeito colateral era pior:
+-- quem cadastrava uma categoria nova na administração não a via na
+-- dashboard, e parecia que o cadastro não tinha funcionado. Agora ela
+-- aparece na hora, com "(0)", e clicar nela mostra o aviso de filtro
+-- sem resultado - que já existe e explica o que houve.
+--
+-- O LEFT JOIN é pelo NOME porque é isso que a view expõe. Só é seguro
+-- porque uk_categorias_nome garante que não existem dois nomes iguais.
 -- ------------------------------------------------------------
 CREATE PROCEDURE sp_vendas_categorias()
 BEGIN
     SELECT
-        categoria,
-        COUNT(*) AS vendas
-      FROM vw_vendas_detalhadas
-     GROUP BY categoria
-     ORDER BY categoria;
+        c.nome            AS categoria,
+        COUNT(v.venda_id) AS vendas
+      FROM categorias c
+      LEFT JOIN vw_vendas_detalhadas v ON v.categoria = c.nome
+     GROUP BY c.nome
+     ORDER BY c.nome;
 END //
 
 DELIMITER ;

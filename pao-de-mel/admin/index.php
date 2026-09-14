@@ -15,9 +15,12 @@ require_once __DIR__ . '/../includes/admin.php';
 $resumo = $pdo->query("
     SELECT (SELECT COUNT(*) FROM vendas)                        AS vendas_total,
            (SELECT COUNT(*) FROM vendas WHERE cancelada = TRUE) AS vendas_canceladas,
-           (SELECT COUNT(*) FROM produtos)                      AS produtos_total,
-           (SELECT COUNT(*) FROM produtos WHERE ativo = FALSE)  AS produtos_fora,
            (SELECT COUNT(*) FROM categorias)                    AS categorias_total,
+           (SELECT COUNT(*) FROM receitas)                      AS receitas_total,
+           (SELECT COUNT(*) FROM receitas r
+             WHERE NOT EXISTS (SELECT 1 FROM receita_ingrediente ri WHERE ri.id_receita = r.id))
+                                                                AS receitas_sem_ingrediente,
+           (SELECT COUNT(*) FROM ingredientes)                  AS ingredientes_total,
            fn_faturamento_periodo(NULL, NULL)                   AS faturamento
 ")->fetch();
 
@@ -28,7 +31,10 @@ require __DIR__ . '/../includes/header.php';
 
 <section class="container page-header">
   <h1 class="page-title">Administração</h1>
-  <p class="page-subtitle">Cadastro de vendas, produtos e categorias. Tudo que muda aqui aparece na dashboard.</p>
+  <p class="page-subtitle">
+    Cadastro de categorias, ingredientes, receitas e vendas.
+    Tudo que muda aqui aparece no site e na dashboard.
+  </p>
 </section>
 
 <?php require __DIR__ . '/../includes/aviso.php'; ?>
@@ -48,14 +54,6 @@ require __DIR__ . '/../includes/header.php';
     </div>
 
     <div class="col-md-4">
-      <a href="produtos.php" class="admin-card">
-        <span class="admin-card-rotulo">Produtos</span>
-        <span class="admin-card-valor"><?php echo (int) $resumo['produtos_total']; ?></span>
-        <span class="admin-card-nota"><?php echo (int) $resumo['produtos_fora']; ?> fora de linha</span>
-      </a>
-    </div>
-
-    <div class="col-md-4">
       <a href="categorias.php" class="admin-card">
         <span class="admin-card-rotulo">Categorias</span>
         <span class="admin-card-valor"><?php echo (int) $resumo['categorias_total']; ?></span>
@@ -63,6 +61,37 @@ require __DIR__ . '/../includes/header.php';
       </a>
     </div>
 
+    <div class="col-md-4">
+      <a href="receitas.php" class="admin-card">
+        <span class="admin-card-rotulo">Receitas</span>
+        <span class="admin-card-valor"><?php echo (int) $resumo['receitas_total']; ?></span>
+        <span class="admin-card-nota">
+          <?php echo (int) $resumo['receitas_sem_ingrediente']; ?> sem ingrediente
+        </span>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a href="ingredientes.php" class="admin-card">
+        <span class="admin-card-rotulo">Ingredientes</span>
+        <span class="admin-card-valor"><?php echo (int) $resumo['ingredientes_total']; ?></span>
+        <span class="admin-card-nota">catálogo com a unidade de cada um</span>
+      </a>
+    </div>
+
+  </div>
+
+  <div class="admin-fluxo">
+    <h2 class="section-title-sm">A ordem de cadastro</h2>
+    <p class="campo-dica">
+      Cada etapa depende da anterior: não dá para criar a receita antes da categoria dela.
+    </p>
+    <ol class="fluxo-etapas">
+      <li><strong>Categoria</strong><span>Pão, Doce, Salgado…</span></li>
+      <li><strong>Ingrediente</strong><span>com a unidade de medida</span></li>
+      <li><strong>Receita</strong><span>escolhe a categoria e os ingredientes</span></li>
+      <li><strong>Venda</strong><span>entra no faturamento da dashboard</span></li>
+    </ol>
   </div>
 
   <div class="admin-regras">
@@ -71,11 +100,14 @@ require __DIR__ . '/../includes/header.php';
       <dt>Categoria</dt>
       <dd>É apagada de verdade — mas o banco recusa enquanto houver receita usando ela.</dd>
 
-      <dt>Produto</dt>
-      <dd>Sai de linha em vez de ser apagado. As vendas que ele já teve continuam contando no faturamento.</dd>
-
       <dt>Venda</dt>
       <dd>É cancelada, não apagada. O registro fica no banco e sai do faturamento.</dd>
+
+      <dt>Receita</dt>
+      <dd>O banco recusa enquanto houver produto nascendo dela. Sem produto, ela é apagada junto com os vínculos de ingrediente.</dd>
+
+      <dt>Ingrediente</dt>
+      <dd>É apagado do catálogo — mas o banco recusa enquanto alguma receita estiver usando.</dd>
     </dl>
   </div>
 </section>

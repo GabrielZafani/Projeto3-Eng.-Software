@@ -67,3 +67,46 @@ type Metricas = {
     ticketMedio: number;
     campeaoVendas: string;
 };
+
+// Uma linha da tabela já pronta para a tela: todo número virou texto
+// formatado. Existe para separar duas responsabilidades que antes
+// estavam grudadas: o map() calcula e formata, o desenho só escreve.
+// Com isso dá para conferir o valor de uma linha sem abrir o DOM.
+type LinhaTabela = {
+    identificador: string;
+    produto: string;
+    categoria: string;
+    quantidade: string;
+    valorUnitario: string;
+    subtotal: string;
+};
+
+// O acumulado de um produto dentro do objeto de contagem do ranking.
+// A chave do objeto é o nome do produto; isto aqui é o valor.
+type TotaisProduto = {
+    unidades: number;
+    faturamento: number;
+};
+
+// Um produto já ranqueado, pronto para virar linha da lista de
+// destaques. A posição não nasce com o objeto: só é atribuída depois
+// de ordenar, porque antes disso ela seria um palpite.
+type ProdutoRanqueado = {
+    posicao: number;
+    produto: string;
+    faturamento: number;
+    participacao: number;
+};
+
+// O recorte de um intervalo de datas, produzido pelo filter().
+// variacao é null - e não zero - quando não existe semana anterior
+// para comparar: zero significaria "não mudou nada", que é mentira.
+type RecortePeriodo = {
+    inicio: string;
+    fim: string;
+    faturamento: number;
+    unidades: number;
+    quantidadeVendas: number;
+    categorias: number;
+    variacao: number | null;
+};
