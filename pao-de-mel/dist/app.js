@@ -164,6 +164,15 @@ function conferirComBanco(resposta) {
     if (doBanco === undefined) {
         return;
     }
+    // A função do banco soma o período INTEIRO: ela não conhece a busca
+    // nem a categoria escolhida na tela. Comparar o total dela com um
+    // subconjunto filtrado acusava "Divergência" toda vez que alguém
+    // clicava num chip - alarme falso, com os dois lados certos, cada um
+    // somando uma coisa diferente. Só há o que conferir sem filtro.
+    const semFiltro = resposta.meta.busca === '' && resposta.meta.categoria === 'todas';
+    if (!semFiltro) {
+        return;
+    }
     const doReduce = calcularMetricas(resposta.vendas).faturamentoTotal;
     const diferenca = Math.abs(numeroSeguro(doBanco) - doReduce);
     if (diferenca > 0.01) {

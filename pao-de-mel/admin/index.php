@@ -93,23 +93,6 @@ require __DIR__ . '/../includes/header.php';
       <li><strong>Venda</strong><span>entra no faturamento da dashboard</span></li>
     </ol>
   </div>
-
-  <div class="admin-regras">
-    <h2 class="section-title-sm">O que acontece ao excluir</h2>
-    <dl class="lista-regras">
-      <dt>Categoria</dt>
-      <dd>É apagada de verdade — mas o banco recusa enquanto houver receita usando ela.</dd>
-
-      <dt>Venda</dt>
-      <dd>É cancelada, não apagada. O registro fica no banco e sai do faturamento.</dd>
-
-      <dt>Receita</dt>
-      <dd>O banco recusa enquanto houver produto nascendo dela. Sem produto, ela é apagada junto com os vínculos de ingrediente.</dd>
-
-      <dt>Ingrediente</dt>
-      <dd>É apagado do catálogo — mas o banco recusa enquanto alguma receita estiver usando.</dd>
-    </dl>
-  </div>
 </section>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>

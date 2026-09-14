@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "tsc && node testes/teste-logica.js"
+    "test": "tsc && node testes/teste-logica.js",
+    "test:tela": "tsc && node testes/teste-navegador.js"
   },
   "devDependencies": {
     "typescript": "^5.6.3"
